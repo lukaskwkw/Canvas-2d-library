@@ -1,7 +1,7 @@
 {
-  "name": "portfolio",
+  "name": "Wrepp",
   "version": "1.0.0",
-  "description": "A vCard style portfolio page",
+  "description": "Webpack, react, eslint, prettier and pre-hooks boilerplate",
   "main": "src/index.js",
   "scripts": {
     "start": "webpack-dev-server --config ./webpack.config.js --mode development"
