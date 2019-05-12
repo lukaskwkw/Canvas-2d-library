@@ -1,5 +1,7 @@
 node_modules/
+dist/
 .vscode/
 *.sublime-project
 *.sublime-workspace
 *.log
+todo.md
