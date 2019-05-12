@@ -1,8 +1,12 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+
+const PRODUCTION_ENV = process.env.NODE_ENV === "production";
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: "./src/index.jsx",
   module: {
     rules: [
       {
@@ -13,9 +17,7 @@ module.exports = {
       {
         test: /\.s?css$/,
         use: [
-          process.env.NODE_ENV !== "production"
-            ? "style-loader"
-            : MiniCssExtractPlugin.loader,
+          !PRODUCTION_ENV ? "style-loader" : MiniCssExtractPlugin.loader,
           "css-loader",
           "sass-loader"
         ]
@@ -33,6 +35,11 @@ module.exports = {
   devServer: {
     contentBase: "./dist"
   },
+  optimization: {
+    minimizer: PRODUCTION_ENV
+      ? [new TerserPlugin({}), new OptimizeCSSAssetsPlugin({})]
+      : []
+  },
   plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
@@ -41,7 +48,17 @@ module.exports = {
       chunkFilename: "[id].css"
     }),
     new HtmlWebpackPlugin({
-      template: __dirname + "/src/assets/index.html"
+      template: __dirname + "/src/assets/index.html",
+      minify: PRODUCTION_ENV
+        ? {
+            collapseWhitespace: true,
+            removeComments: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true
+          }
+        : false
     })
   ]
 };
