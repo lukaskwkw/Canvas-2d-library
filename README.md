@@ -9,7 +9,7 @@ Simple boilerplate that include all good stuff - webpack, react, eslint, prettie
 ## Installation
 
 ```sh
-npm install
+npm ci
 ```
 
 Running development server:
@@ -26,46 +26,75 @@ Open webrowser on [localhost:8080](localhost:8080)
 npm run build:production
 ```
 
-Move dist files to your server
+Move dist files to your server <br /> <br />
 
-#
-
-## Docker
+# Docker
 
 ### Prerequisites:
 
 [Docker](https://docs.docker.com/install/)
 
-### One command for build and run
+### SSL Encryption
+
+Generating self signed ssl certificates. You can skip this and go streight to deployment section if you whish to proceed whithout encryption
+
+#### Linux
+
+In repository create folder certs
 
 ```sh
-npm run docker:deploy $CONTAINER_NAME
+mkdir certs
+openssl genrsa 2048 > certs/server.key
+chmod 400 certs/server.key
+openssl req -new -x509 -nodes -sha256 -days 365 -key certs/server.key -out certs/server.cert
 ```
 
-Open webrowser on [localhost:8112](localhost:8112)
+### Deployment
 
-### Building:
+#### One command for build and run
+
+```sh
+npm run docker:deploy
+```
+
+or for SSL version
+
+```sh
+npm run docker:deploy:ssl
+```
+
+#### Building
 
 ```sh
 npm run docker:build
 ```
 
-### Running
+#### Running
 
 ```sh
-npm run docker:run $CONTAINER_NAME
+npm run docker:run
 ```
 
-Open webrowser on [localhost:8112](localhost:8112)
-
-or
+or for SSL version
 
 ```sh
-npm run docker:run:port $CONTAINER_NAME $PORT
+npm run docker:run:sll
 ```
 
-Where:
+Open webrowser on [localhost](http://localhost) or [https://localhost](https://localhost)
 
-**\$CONTAINER_NAME** = your new conatiner desired name
+## Container management
 
-**\$PORT** is a port to access your container
+After docker deployment you can procced with simply these commands
+
+```sh
+npm run docker:start
+```
+
+```sh
+npm run docker:stop
+```
+
+```sh
+npm run docker:removeContainer
+```
