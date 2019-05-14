@@ -1,5 +1,6 @@
 node_modules/
 dist/
+certs/
 .vscode/
 *.sublime-project
 *.sublime-workspace
