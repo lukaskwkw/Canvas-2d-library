@@ -46,7 +46,7 @@ In repository create folder certs
 mkdir certs
 openssl genrsa 2048 > certs/server.key
 chmod 400 certs/server.key
-openssl req -new -x509 -nodes -sha256 -days 365 -key certs/server.key -out certs/server.cert
+openssl req -new -x509 -nodes -sha256 -days 365 -key certs/server.key -out certs/server.crt
 ```
 
 ### Deployment
@@ -67,6 +67,12 @@ npm run docker:deploy:ssl
 
 ```sh
 npm run docker:build
+```
+
+or
+
+```sh
+npm run docker:build:ssl
 ```
 
 #### Running
@@ -98,3 +104,7 @@ npm run docker:stop
 ```sh
 npm run docker:removeContainer
 ```
+
+# ARMv7L support
+
+It occurs that node-sass package doesn't have compiled armv7l version of its binary so i decided to compile one. In order to get boilerplate fully work with your arm7l architecture just simply checkout to `armv7l` branch and proceed instalation from it.
