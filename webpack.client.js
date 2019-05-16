@@ -1,19 +1,16 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const merge = require("webpack-merge");
+
+const babelLoaderConfig = require("./webpack.babel-loader");
 
 const PRODUCTION_ENV = process.env.NODE_ENV === "production";
 
-module.exports = {
+const config = {
   entry: "./src/index.jsx",
   module: {
     rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: ["babel-loader"]
-      },
       {
         test: /\.s?css$/,
         use: [
@@ -28,12 +25,12 @@ module.exports = {
     extensions: ["*", ".js", ".jsx"]
   },
   output: {
-    path: __dirname + "/dist",
+    path: __dirname + "/dist/public",
     publicPath: "/",
     filename: "bundle.js"
   },
   devServer: {
-    contentBase: "./dist"
+    contentBase: "./dist/public"
   },
   optimization: {
     minimizer: PRODUCTION_ENV
@@ -46,19 +43,8 @@ module.exports = {
       // both options are optional
       filename: "[name].css",
       chunkFilename: "[id].css"
-    }),
-    new HtmlWebpackPlugin({
-      template: __dirname + "/src/assets/index.html",
-      minify: PRODUCTION_ENV
-        ? {
-            collapseWhitespace: true,
-            removeComments: true,
-            removeRedundantAttributes: true,
-            removeScriptTypeAttributes: true,
-            removeStyleLinkTypeAttributes: true,
-            useShortDoctype: true
-          }
-        : false
     })
   ]
 };
+
+module.exports = merge(babelLoaderConfig, config);
