@@ -4,7 +4,6 @@ import Portfolio from "./pages/Portfolio";
 
 const PAGES = {
   "/": Home,
-  "404": FourOhFour,
   "/404": FourOhFour,
   "/portfolio": Portfolio
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
 import { Routes } from "../routes";
+import Link from "../components/Link";
 
 const Home = () => (
   <>
@@ -8,7 +9,7 @@ const Home = () => (
     <ul>
       {Routes.map(href => (
         <li key={href}>
-          <a href={href}>{href}</a>
+          <Link href={href}>{href}</Link>
         </li>
       ))}
     </ul>

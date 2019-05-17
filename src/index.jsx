@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { PropTypes } from "prop-types";
 
 import "./index.scss";
 import PAGES from "./routes";
 import Header from "./components/Header";
+import history from "./utils/history";
 
 const App = ({ pathname }) => {
-  const Handler = PAGES[pathname] || PAGES["404"];
+  const [page, setPage] = useState(pathname);
+
+  history.addListener(setPage);
+
+  const Handler = PAGES[page] || PAGES["/404"];
   return (
     <>
       <Header />

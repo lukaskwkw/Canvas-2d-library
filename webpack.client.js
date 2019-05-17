@@ -1,4 +1,5 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const merge = require("webpack-merge");
@@ -46,5 +47,13 @@ const config = {
     })
   ]
 };
+
+// make separate webpack config just for webpack dev server
+!PRODUCTION_ENV &&
+  config.plugins.push(
+    new HtmlWebpackPlugin({
+      template: __dirname + "/src/assets/index.html"
+    })
+  );
 
 module.exports = merge(babelLoaderConfig, config);
