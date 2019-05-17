@@ -9,7 +9,7 @@ import PAGES from "./routes";
 const server = express();
 const port = process.env.PORT || 3000;
 
-server.use(express.static("dist/public"));
+server.use(express.static("public"));
 
 server.get("*", (req, res) => {
   const innerContent = renderToString(<App pathname={req.path} />);

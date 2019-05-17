@@ -1,8 +1,9 @@
 node_modules/
-dist/
+public/
 certs/
 .vscode/
 *.sublime-project
 *.sublime-workspace
 *.log
 todo.md
+bundle.js

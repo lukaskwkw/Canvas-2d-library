@@ -25,12 +25,12 @@ const config = {
     extensions: ["*", ".js", ".jsx"]
   },
   output: {
-    path: __dirname + "/dist/public",
+    path: __dirname + "/public",
     publicPath: "/",
     filename: "bundle.js"
   },
   devServer: {
-    contentBase: "./dist/public"
+    contentBase: "./public"
   },
   optimization: {
     minimizer: PRODUCTION_ENV
