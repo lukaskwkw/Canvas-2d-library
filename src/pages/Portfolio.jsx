@@ -3,32 +3,33 @@ import styled from "styled-components";
 
 import Header from "../components/Header";
 import Link from "../components/Link";
+import ImageTile from "../components/ImageTile";
+
+const ImageUrls = ["img/nk.png", "img/wp_plugin.png", "img/wrepp.png"];
 
 const Images = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
 
-const ImageContainer = styled.div`
-  max-width: 240px;
-  width: 100%;
-  height: 100px;
-  flex: 1 0 21%;
-  background-image: url("https://lorempixel.com/240/100/");
+const Container = styled.div`
+  margin: 32px;
 `;
 
-const TestPug = () => pug`
-  Images
-    each image in Array(5).fill()
-      ImageContainer(key=image)
+const Section = () => pug`
+  Container
+    Images
+      each image, index in [...ImageUrls, ...ImageUrls]
+        ImageTile(key=index src=image title=image)  
 `;
 
-const Portfolio = () => (
+const Portfolio = () => pug`
   <>
-    <Header>Portfolio section</Header>
-    <TestPug />
-    <Link href="/">Main Page</Link>
-  </>
-);
+    Header Portfolio section
+
+    Link(href="/") Main Page
+
+    Section
+`;
 
 export default Portfolio;
