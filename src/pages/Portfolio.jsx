@@ -24,12 +24,11 @@ const Section = () => pug`
 `;
 
 const Portfolio = () => pug`
-  <>
-    Header Portfolio section
+  Header Portfolio section
 
-    Link(href="/") Main Page
-
-    Section
+  Link(href="/") Main Page
+  
+  Section
 `;
 
 export default Portfolio;

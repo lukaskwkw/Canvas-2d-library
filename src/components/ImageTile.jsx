@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { clamp } from "../utils/math";
+import PropTypes from "prop-types";
 
 const ImageScale = 1.3;
 
@@ -75,14 +76,20 @@ const roundZoomNearCorners = ({
 
 const DefaultPosition = { x: 0, y: 0 };
 
-const ImageTile = React.forwardRef({
-  remder: ({ position = DefaultPosition, src, title }, ref) => pug`
+const ImageTile = React.forwardRef(
+  ({ position = DefaultPosition, src, title }, ref) => pug`
     Wrapper
       ImageContainer(ref=ref)
         Image(style={left: position.x +'px', top: position.y + 'px'} src=src)
         ImageText #{title}
 `
-});
+);
+
+ImageTile.propTypes = {
+  position: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
+  src: PropTypes.string,
+  title: PropTypes.string
+};
 
 const onMouseMove = (myRef, setPosition) => e => {
   requestAnimationFrame(() => {
