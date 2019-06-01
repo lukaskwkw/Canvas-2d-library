@@ -149,7 +149,8 @@ export const circlePulse = (x, y, maxRadius = 50, minRadius = 20) => (
 };
 
 export const orbit = (
-  orbitRadius,
+  xOrbitRadius,
+  yOrbitRadius = xOrbitRadius,
   orbitSize = 20,
   speed = 0.1,
   centreX,
@@ -160,8 +161,8 @@ export const orbit = (
 
   let radian = 0;
   const render = () => {
-    const orbitX = orbitRadius * Math.cos(radian);
-    const orbitY = orbitRadius * Math.sin(radian);
+    const orbitX = xOrbitRadius * Math.cos(radian);
+    const orbitY = yOrbitRadius * Math.sin(radian);
 
     context.clearRect(
       orbitX + x - (orbitSize + orbitSize),
@@ -175,6 +176,52 @@ export const orbit = (
     context.fill();
 
     radian += speed;
+
+    requestAnimationFrame(render);
+  };
+
+  render();
+};
+
+export const lissajousCurves = (
+  xOrbitRadius,
+  yOrbitRadius = xOrbitRadius,
+  orbitSize = 20,
+  xSpeed = 0.1,
+  ySpeed = 0.11,
+  centreX,
+  centreY
+) => (height, width) => context => {
+  const x = typeof centreX === "number" ? centreX : width / 2,
+    y = typeof centreY === "number" ? centreY : height / 2;
+
+  let xRadian = 0;
+  let yRadian = 0;
+
+  //move out of render function in order to
+  //momorize last postition and clean it before new render
+  let orbitX = 0;
+  let orbitY = 0;
+
+  const render = () => {
+    context.clearRect(
+      orbitX + x - (orbitSize + orbitSize),
+      orbitY + y - (orbitSize + orbitSize),
+      (orbitSize + orbitSize) * 2,
+      (orbitSize + orbitSize) * 2
+    );
+
+    orbitX = xOrbitRadius * Math.cos(xRadian);
+    orbitY = yOrbitRadius * Math.sin(yRadian);
+
+    // context.clearRect(0, 0, width, height);
+
+    context.beginPath();
+    context.arc(orbitX + x, orbitY + y, orbitSize, 0, Math.PI * 2, false);
+    context.fill();
+
+    xRadian += xSpeed;
+    yRadian += ySpeed;
 
     requestAnimationFrame(render);
   };
