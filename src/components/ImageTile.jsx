@@ -130,11 +130,9 @@ const HOC = ({ src, title }) => {
   const mouseLeave = onMouseLeave(setPosition);
 
   useEffect(() => {
-    // console.info({ curr: myRef.current });
     myRef.current.addEventListener("mousemove", mouseMove);
     myRef.current.addEventListener("mouseleave", mouseLeave);
     return () => {
-      // console.info("dupa");
       myRef.current.removeEventListener("mousemove", mouseMove);
       myRef.current.removeEventListener("mouseleave", mouseLeave);
     };
