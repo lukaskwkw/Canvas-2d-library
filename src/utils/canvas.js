@@ -1,3 +1,6 @@
+const clearFix = 1;
+const doubleClearFix = 2;
+
 export const drawRandomLines = (numberOfLines = 100) => (
   width,
   height
@@ -37,26 +40,26 @@ export const sinus = (invert = true, frequncy = 0.5, renderer) => (
 
 export const circleUpAndDown = (
   radius = 50,
-  x = null,
-  y = null,
+  originX = null,
+  originY = null,
   circleOffset = null,
   speed = 0.02
 ) => (height, width) => context => {
-  const startX = typeof x == "number" ? x : width * 0.5,
-    startY = typeof y == "number" ? y : height * 0.5,
+  const startX = typeof originX == "number" ? originX : width * 0.5,
+    startY = typeof originY == "number" ? originY : height * 0.5,
     offset = circleOffset || height * 0.4;
 
   let radian = 0;
+  let y = 0;
 
   const render = () => {
-    const y = startY + Math.sin(radian) * offset;
-
     context.clearRect(
-      startX - radius,
-      y - radius - speed * 450,
-      radius * 2,
-      radius * 2 + speed * 900
+      startX - radius - clearFix,
+      y - radius - clearFix,
+      doubleClearFix + radius * 2,
+      doubleClearFix + radius * 2
     );
+    y = startY + Math.sin(radian) * offset;
 
     context.beginPath();
     context.arc(startX, y, radius, 0, Math.PI * 2, false);
@@ -86,20 +89,22 @@ export const circleUpAndDownAndPulse = (
 
   let radian = 0;
   let pulseRadian = pulseRadianStart;
+  let y = 0;
+  let radius = 0;
 
   const render = () => {
-    const y = startY + Math.sin(radian) * offset;
-    const radius =
+    context.clearRect(
+      startX - radius - clearFix,
+      y - radius - clearFix,
+      radius * 2 + doubleClearFix,
+      radius * 2 + doubleClearFix
+    );
+
+    y = startY + Math.sin(radian) * offset;
+    radius =
       circleOffset +
       minRadius / 2 +
       Math.sin(pulseRadian) * (circleOffset - minRadius / 2);
-
-    context.clearRect(
-      startX - maxRadius,
-      y - maxRadius - speed * 450,
-      maxRadius * 2,
-      maxRadius * 2 + speed * 900
-    );
 
     context.beginPath();
     context.arc(startX, y, radius, 0, Math.PI * 2, false);
@@ -124,17 +129,18 @@ export const circlePulse = (x, y, maxRadius = 50, minRadius = 20) => (
 
   let radian = 0;
   const speed = 0.05;
+  let radius = 0;
 
   const render = () => {
-    const radius =
-      offset + minRadius / 2 + Math.sin(radian) * (offset - minRadius / 2);
-
     context.clearRect(
-      startX - maxRadius,
-      startY - maxRadius,
-      maxRadius * 2,
-      maxRadius * 2
+      startX - radius - clearFix,
+      startY - radius - clearFix,
+      doubleClearFix + radius * 2,
+      doubleClearFix + radius * 2
     );
+
+    radius =
+      offset + minRadius / 2 + Math.sin(radian) * (offset - minRadius / 2);
 
     context.beginPath();
     context.arc(startX, startY, radius, 0, Math.PI * 2, false);
@@ -160,16 +166,17 @@ export const orbit = (
     y = typeof centreY === "number" ? centreY : height / 2;
 
   let radian = 0;
+  let orbitX = 0;
+  let orbitY = 0;
   const render = () => {
-    const orbitX = xOrbitRadius * Math.cos(radian);
-    const orbitY = yOrbitRadius * Math.sin(radian);
-
     context.clearRect(
-      orbitX + x - (orbitSize + orbitSize),
-      orbitY + y - (orbitSize + orbitSize),
-      (orbitSize + orbitSize) * 2,
-      (orbitSize + orbitSize) * 2
+      orbitX + x - orbitSize - clearFix,
+      orbitY + y - orbitSize - clearFix,
+      doubleClearFix + orbitSize * 2,
+      doubleClearFix + orbitSize * 2
     );
+    orbitX = xOrbitRadius * Math.cos(radian);
+    orbitY = yOrbitRadius * Math.sin(radian);
 
     context.beginPath();
     context.arc(orbitX + x, orbitY + y, orbitSize, 0, Math.PI * 2, false);
@@ -205,16 +212,14 @@ export const lissajousCurves = (
 
   const render = () => {
     context.clearRect(
-      orbitX + x - (orbitSize + orbitSize),
-      orbitY + y - (orbitSize + orbitSize),
-      (orbitSize + orbitSize) * 2,
-      (orbitSize + orbitSize) * 2
+      orbitX + x - orbitSize - clearFix,
+      orbitY + y - orbitSize - clearFix,
+      doubleClearFix + orbitSize * 2,
+      doubleClearFix + orbitSize * 2
     );
 
     orbitX = xOrbitRadius * Math.cos(xRadian);
     orbitY = yOrbitRadius * Math.sin(yRadian);
-
-    // context.clearRect(0, 0, width, height);
 
     context.beginPath();
     context.arc(orbitX + x, orbitY + y, orbitSize, 0, Math.PI * 2, false);
@@ -246,7 +251,7 @@ export const circleAlpha = (radius = 100, colorRGB = "100, 001, 100") => (
 
     context.fillStyle = `rgba(${colorRGB}, ${alpha})`;
 
-    context.clearRect(0, 0, width, height);
+    context.clearRect(startX - radius, startY - radius, radius * 2, radius * 2);
     context.beginPath();
     context.arc(startX, startY, radius, 0, Math.PI * 2, false);
     context.fill();
