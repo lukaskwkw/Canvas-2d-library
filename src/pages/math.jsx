@@ -6,6 +6,7 @@ import {
   sinus,
   circleUpAndDown,
   circleAlpha,
+  orbit,
   circleUpAndDownAndPulse
 } from "../utils/canvas";
 
@@ -33,7 +34,14 @@ const Canvas = ({ renderer, width = DefaultSize, height = DefaultSize }) => {
 `;
 };
 
-const sinusRenderer = (x, y) => (height, width) => context => {
+const sinusRendererOrbit = (x, y) => (height, width) => context => {
+  setTimeout(
+    () => orbit(50, 15, 0.05, x, y)(height, width)(context),
+    x * Math.random() * 5
+  );
+};
+
+const sinusRendererUpAndDownAndPulse = (x, y) => (height, width) => context => {
   setTimeout(
     () =>
       circleUpAndDownAndPulse(x, y, 15, 0, Math.random() * 3)(height, width)(
@@ -52,16 +60,22 @@ const sinusRenderer = (x, y) => (height, width) => context => {
 
 const MathTab = () => pug`
   Plane
-    Canvas(renderer = sinus(true, 0.05, sinusRenderer))
+    Canvas(renderer = sinus(true, 0.5, sinusRendererOrbit))
+
+    Canvas(renderer = sinus(true, 0.05, sinusRendererUpAndDownAndPulse))
 
     Canvas(renderer = sinus(true, 0.01))
     
-    Canvas(renderer = drawRandomLines(100))
-
+    Canvas(renderer = drawRandomLines(1000))
+    
     Canvas(renderer = circlePulse(null, null, 30))
 
+    // Canvas(renderer = orbit(150, 20, 0.1 200,400))
+    
     Canvas(renderer = circleAlpha(200))
-
+    
+    Canvas(renderer = orbit(200, 20, 0.01))
+    
     Canvas(renderer = circleUpAndDown())
 `;
 

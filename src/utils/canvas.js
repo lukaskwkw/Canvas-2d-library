@@ -87,7 +87,6 @@ export const circleUpAndDownAndPulse = (
   let radian = 0;
   let pulseRadian = pulseRadianStart;
 
-  context.globalCompositeOperation = "overlay";
   const render = () => {
     const y = startY + Math.sin(radian) * offset;
     const radius =
@@ -139,6 +138,40 @@ export const circlePulse = (x, y, maxRadius = 50, minRadius = 20) => (
 
     context.beginPath();
     context.arc(startX, startY, radius, 0, Math.PI * 2, false);
+    context.fill();
+
+    radian += speed;
+
+    requestAnimationFrame(render);
+  };
+
+  render();
+};
+
+export const orbit = (
+  orbitRadius,
+  orbitSize = 20,
+  speed = 0.1,
+  centreX,
+  centreY
+) => (height, width) => context => {
+  const x = typeof centreX === "number" ? centreX : width / 2,
+    y = typeof centreY === "number" ? centreY : height / 2;
+
+  let radian = 0;
+  const render = () => {
+    const orbitX = orbitRadius * Math.cos(radian);
+    const orbitY = orbitRadius * Math.sin(radian);
+
+    context.clearRect(
+      orbitX + x - (orbitSize + orbitSize),
+      orbitY + y - (orbitSize + orbitSize),
+      (orbitSize + orbitSize) * 2,
+      (orbitSize + orbitSize) * 2
+    );
+
+    context.beginPath();
+    context.arc(orbitX + x, orbitY + y, orbitSize, 0, Math.PI * 2, false);
     context.fill();
 
     radian += speed;
