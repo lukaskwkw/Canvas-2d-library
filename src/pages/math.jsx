@@ -4,7 +4,6 @@ import {
   circlePulse,
   drawRandomLines,
   sinus,
-  circleAlpha,
   orbit,
   lissajousCurves,
   circleUpAndDownAndPulse,
@@ -24,9 +23,6 @@ const Canvas = ({ renderer, width = DefaultSize, height = DefaultSize }) => {
   useEffect(() => {
     const { current: canvas } = ref;
     const context = canvas.getContext("2d");
-    // let { width: canvasWidth, height: canvasHeight } = canvas;
-    // canvasWidth = 1000;
-    // canvasHeight = 1000;
     renderer(height, width)(context);
   });
 
@@ -51,8 +47,8 @@ const sinusRendererlissajousCurves = (x, y) => (height, width) => context => {
         2,
         0.075 * Math.random(),
         0.071 * Math.random(),
-        x /*  * Math.random() * width */,
-        y /*  * Math.random() * height */
+        x,
+        y
       )(height, width)(context),
     x * Math.random() * 15000
   );
@@ -92,12 +88,8 @@ const MathTab = () => pug`
     Canvas(renderer = circlePulse(null, null, 30))
 
     Canvas(renderer = orbit(150, 150, 0.1, 200,400))
-    
-    Canvas(renderer = circleAlpha(200))
-    
+        
     Canvas(renderer = orbit(200, 200, 20, 0.01))
-    
-    Canvas(renderer = circleUpAndDown())
 `;
 
 export default MathTab;
