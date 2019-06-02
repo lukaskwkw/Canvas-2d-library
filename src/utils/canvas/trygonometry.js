@@ -1,6 +1,6 @@
-const CircleCleanFix = 0.8;
+export const CircleCleanFix = 0.8;
 
-const clearArc = context => (
+export const clearArc = context => (
   x,
   y,
   radius,
