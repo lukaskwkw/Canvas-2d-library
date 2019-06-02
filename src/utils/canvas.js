@@ -1,5 +1,21 @@
-const clearFix = 1;
-const doubleClearFix = 2;
+const CircleCleanFix = 0.8;
+
+const clearArc = context => (
+  x,
+  y,
+  radius,
+  startAngle,
+  endAngle,
+  anticlockwise
+) => {
+  context.globalCompositeOperation = "destination-out";
+
+  context.beginPath();
+  context.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+  context.fill();
+
+  context.globalCompositeOperation = "normal";
+};
 
 export const drawRandomLines = (numberOfLines = 100) => (
   width,
@@ -53,12 +69,15 @@ export const circleUpAndDown = (
   let y = 0;
 
   const render = () => {
-    context.clearRect(
-      startX - radius - clearFix,
-      y - radius - clearFix,
-      doubleClearFix + radius * 2,
-      doubleClearFix + radius * 2
+    clearArc(context)(
+      startX,
+      y,
+      radius + CircleCleanFix,
+      0,
+      Math.PI * 2,
+      false
     );
+
     y = startY + Math.sin(radian) * offset;
 
     context.beginPath();
@@ -93,11 +112,13 @@ export const circleUpAndDownAndPulse = (
   let radius = 0;
 
   const render = () => {
-    context.clearRect(
-      startX - radius - clearFix,
-      y - radius - clearFix,
-      radius * 2 + doubleClearFix,
-      radius * 2 + doubleClearFix
+    clearArc(context)(
+      startX,
+      y,
+      radius + CircleCleanFix,
+      0,
+      Math.PI * 2,
+      false
     );
 
     y = startY + Math.sin(radian) * offset;
@@ -132,11 +153,13 @@ export const circlePulse = (x, y, maxRadius = 50, minRadius = 20) => (
   let radius = 0;
 
   const render = () => {
-    context.clearRect(
-      startX - radius - clearFix,
-      startY - radius - clearFix,
-      doubleClearFix + radius * 2,
-      doubleClearFix + radius * 2
+    clearArc(context)(
+      startX,
+      startY,
+      radius + CircleCleanFix,
+      0,
+      Math.PI * 2,
+      false
     );
 
     radius =
@@ -169,12 +192,15 @@ export const orbit = (
   let orbitX = 0;
   let orbitY = 0;
   const render = () => {
-    context.clearRect(
-      orbitX + x - orbitSize - clearFix,
-      orbitY + y - orbitSize - clearFix,
-      doubleClearFix + orbitSize * 2,
-      doubleClearFix + orbitSize * 2
+    clearArc(context)(
+      orbitX + x,
+      orbitY + y,
+      orbitSize + CircleCleanFix,
+      0,
+      Math.PI * 2,
+      false
     );
+
     orbitX = xOrbitRadius * Math.cos(radian);
     orbitY = yOrbitRadius * Math.sin(radian);
 
@@ -211,11 +237,13 @@ export const lissajousCurves = (
   let orbitY = 0;
 
   const render = () => {
-    context.clearRect(
-      orbitX + x - orbitSize - clearFix,
-      orbitY + y - orbitSize - clearFix,
-      doubleClearFix + orbitSize * 2,
-      doubleClearFix + orbitSize * 2
+    clearArc(context)(
+      orbitX + x,
+      orbitY + y,
+      orbitSize + CircleCleanFix,
+      0,
+      Math.PI * 2,
+      true
     );
 
     orbitX = xOrbitRadius * Math.cos(xRadian);
@@ -249,9 +277,18 @@ export const circleAlpha = (radius = 100, colorRGB = "100, 001, 100") => (
   const render = () => {
     const alpha = baseAlpha + Math.sin(radian) * offset;
 
-    context.fillStyle = `rgba(${colorRGB}, ${alpha})`;
+    //in order to completly erase opacity black color need to be set
+    context.fillStyle = `#000`;
+    clearArc(context)(
+      startX,
+      startY,
+      radius + CircleCleanFix,
+      0,
+      Math.PI * 2,
+      false
+    );
 
-    context.clearRect(startX - radius, startY - radius, radius * 2, radius * 2);
+    context.fillStyle = `rgba(${colorRGB}, ${alpha})`;
     context.beginPath();
     context.arc(startX, startY, radius, 0, Math.PI * 2, false);
     context.fill();

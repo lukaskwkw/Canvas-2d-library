@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import {
+  circleAlpha,
   circlePulse,
   drawRandomLines,
   sinus,
@@ -44,9 +45,9 @@ const sinusRendererlissajousCurves = (x, y) => (height, width) => context => {
       lissajousCurves(
         150 * Math.random() * 5,
         150 * Math.random() * 5,
-        2,
-        0.075 * Math.random(),
-        0.071 * Math.random(),
+        3,
+        0.015 * Math.random(),
+        0.011 * Math.random(),
         x,
         y
       )(height, width)(context),
@@ -66,26 +67,28 @@ const sinusRendererUpAndDownAndPulse = (x, y) => (height, width) => context => {
 
 const sinusRendererUpAndDown = (x, y) => (height, width) => context => {
   setTimeout(
-    () => circleUpAndDown(5, x, y, null, 0.02)(height, width)(context),
+    () => circleUpAndDown(15, x, y, null, 0.02)(height, width)(context),
     x
   );
 };
 
 const MathTab = () => pug`
   Plane
-    Canvas(renderer = sinus(true, 0.5, sinusRendererOrbit))
+    Canvas(renderer = sinus(true, 0.05, sinusRendererOrbit))
 
-    Canvas(renderer = sinus(true, 0.3, sinusRendererUpAndDown))
+    Canvas(renderer = sinus(true, 0.1, sinusRendererUpAndDown))
 
-    Canvas(renderer = sinus(true, 0.3, sinusRendererUpAndDownAndPulse))
+    Canvas(renderer = sinus(true, 0.005, sinusRendererlissajousCurves))
 
-    Canvas(renderer = sinus(true, 0.001, sinusRendererlissajousCurves))
+    Canvas(renderer = sinus(true, 0.03, sinusRendererUpAndDownAndPulse))
 
     Canvas(renderer = sinus(true, 0.01))
     
     Canvas(renderer = drawRandomLines(10))
     
     Canvas(renderer = circlePulse(null, null, 30))
+
+    Canvas(renderer = circleAlpha())
 
     Canvas(renderer = orbit(150, 150, 0.1, 200,400))
         
