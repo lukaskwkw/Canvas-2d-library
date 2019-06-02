@@ -13,7 +13,7 @@ export const Circle = context => (originX, originY, size = 20) => {
   };
 };
 
-export const Particle = (x, y, speed, direction, renderer, clearFunc) => {
+export const Particle = (x, y, speed, direction, renderer) => {
   let position = new Vector(x, y);
   let velocity = new Vector(0, 0);
   velocity.setLength(speed);
@@ -22,7 +22,7 @@ export const Particle = (x, y, speed, direction, renderer, clearFunc) => {
   const update = () => position.addTo(velocity);
 
   const render = () => {
-    clearFunc(position.getX(), position.getY());
+    // clearFunc(position.getX(), position.getY());
     update();
     renderer(position.getX(), position.getY());
   };

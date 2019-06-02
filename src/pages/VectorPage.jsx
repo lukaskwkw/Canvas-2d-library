@@ -18,13 +18,14 @@ const linearMotion = () => (height, width) => context => {
 
   const particles = [];
 
-  for (let i = 1; i < 500; i++) {
+  //cool effect fot angle (i * 360000 * 180) / Math.PI, (i * 0.000036 * 180) / Math.PI
+  for (let i = 1; i < 50500; i++) {
     particles.push(
       new Particle(
         x,
         y,
-        i / 500,
-        (i * 3.6 * 180) / Math.PI,
+        i / 250 /* * 50 * Math.random() */,
+        (i * 36000 * 180) / Math.PI /* * Math.random() */,
         circle.renderer,
         circle.clear
       )
@@ -32,6 +33,8 @@ const linearMotion = () => (height, width) => context => {
   }
 
   const render = () => {
+    context.clearRect(0, 0, width, height);
+
     particles.forEach(particle => particle.render());
     particle2.render();
 
@@ -44,7 +47,7 @@ const linearMotion = () => (height, width) => context => {
 const VectorTab = () => {
   return pug`
     Plane
-      Canvas(renderer=linearMotion())
+      Canvas(width=window.innerWidth height=window.innerHeight renderer=linearMotion())
   `;
 };
 
