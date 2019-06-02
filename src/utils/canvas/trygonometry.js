@@ -14,7 +14,7 @@ export const clearArc = context => (
   context.arc(x, y, radius, startAngle, endAngle, anticlockwise);
   context.fill();
 
-  context.globalCompositeOperation = "normal";
+  context.globalCompositeOperation = "lighter";
 };
 
 export const drawRandomLines = (numberOfLines = 100) => (
