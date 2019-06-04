@@ -15,10 +15,13 @@ export const Canvas = ({
   height = DefaultSize
 }) => {
   const ref = useRef();
+  let unmount = false;
+  const checkUnmount = () => unmount;
   useEffect(() => {
     const { current: canvas } = ref;
     const context = canvas.getContext("2d");
-    renderer(height, width)(context);
+    renderer(height, width)(context, checkUnmount);
+    return () => (unmount = true);
   });
 
   return pug`

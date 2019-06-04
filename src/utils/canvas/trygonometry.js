@@ -32,7 +32,7 @@ export const drawRandomLines = (numberOfLines = 100) => (
 export const sinus = (invert = true, frequncy = 0.5, renderer) => (
   height,
   width
-) => context => {
+) => (context, checkUnmount) => {
   const startX = width * 0.1,
     startY = height * 0.1,
     offset = 5;
@@ -47,7 +47,7 @@ export const sinus = (invert = true, frequncy = 0.5, renderer) => (
     let y = Math.sin(radian) * 50;
 
     if (renderer) {
-      renderer(x, y)(height, width)(context);
+      renderer(x, y)(height, width)(context, checkUnmount);
     } else {
       context.fillRect(x + startX, y + startY, offset, offset);
     }
@@ -60,7 +60,7 @@ export const circleUpAndDown = (
   originY = null,
   circleOffset = null,
   speed = 0.02
-) => (height, width) => context => {
+) => (height, width) => (context, checkUnmount) => {
   const startX = typeof originX == "number" ? originX : width * 0.5,
     startY = typeof originY == "number" ? originY : height * 0.5,
     offset = circleOffset || height * 0.4;
@@ -69,6 +69,10 @@ export const circleUpAndDown = (
   let y = 0;
 
   const render = () => {
+    if (checkUnmount()) {
+      return;
+    }
+
     clearArc(context)(
       startX,
       y,
@@ -101,7 +105,7 @@ export const circleUpAndDownAndPulse = (
   circleOffset = maxRadius / 2,
   upAndDownOffset = null,
   speed = 0.02
-) => (height, width) => context => {
+) => (height, width) => (context, checkUnmount) => {
   const startX = typeof originX == "number" ? originX : width * 0.5,
     startY = typeof originY == "number" ? originY : height * 0.5,
     offset = upAndDownOffset || height * 0.4;
@@ -112,6 +116,9 @@ export const circleUpAndDownAndPulse = (
   let radius = 0;
 
   const render = () => {
+    if (checkUnmount()) {
+      return;
+    }
     clearArc(context)(
       startX,
       y,
@@ -143,7 +150,7 @@ export const circleUpAndDownAndPulse = (
 export const circlePulse = (x, y, maxRadius = 50, minRadius = 20) => (
   height,
   width
-) => context => {
+) => (context, checkUnmount) => {
   const startX = typeof x == "number" ? x : width * 0.5,
     startY = typeof y == "number" ? y : height * 0.5,
     offset = maxRadius / 2;
@@ -153,6 +160,9 @@ export const circlePulse = (x, y, maxRadius = 50, minRadius = 20) => (
   let radius = 0;
 
   const render = () => {
+    if (checkUnmount()) {
+      return;
+    }
     clearArc(context)(
       startX,
       startY,
@@ -184,7 +194,7 @@ export const orbit = (
   speed = 0.1,
   centreX,
   centreY
-) => (height, width) => context => {
+) => (height, width) => (context, checkUnmount) => {
   const x = typeof centreX === "number" ? centreX : width / 2,
     y = typeof centreY === "number" ? centreY : height / 2;
 
@@ -192,6 +202,9 @@ export const orbit = (
   let orbitX = 0;
   let orbitY = 0;
   const render = () => {
+    if (checkUnmount()) {
+      return;
+    }
     clearArc(context)(
       orbitX + x,
       orbitY + y,
@@ -224,7 +237,7 @@ export const lissajousCurves = (
   ySpeed = 0.11,
   centreX,
   centreY
-) => (height, width) => context => {
+) => (height, width) => (context, checkUnmount) => {
   const x = typeof centreX === "number" ? centreX : width / 2,
     y = typeof centreY === "number" ? centreY : height / 2;
 
@@ -237,6 +250,9 @@ export const lissajousCurves = (
   let orbitY = 0;
 
   const render = () => {
+    if (checkUnmount()) {
+      return;
+    }
     clearArc(context)(
       orbitX + x,
       orbitY + y,
@@ -265,7 +281,7 @@ export const lissajousCurves = (
 export const circleAlpha = (radius = 100, colorRGB = "100, 001, 100") => (
   height,
   width
-) => context => {
+) => (context, checkUnmount) => {
   const startX = width * 0.5,
     startY = height * 0.5,
     offset = 0.5;
@@ -275,6 +291,9 @@ export const circleAlpha = (radius = 100, colorRGB = "100, 001, 100") => (
   const baseAlpha = 0.5;
 
   const render = () => {
+    if (checkUnmount()) {
+      return;
+    }
     const alpha = baseAlpha + Math.sin(radian) * offset;
 
     //in order to completly erase opacity black color need to be set

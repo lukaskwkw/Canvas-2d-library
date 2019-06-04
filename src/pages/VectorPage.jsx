@@ -2,7 +2,7 @@ import React from "react";
 import { Canvas, Plane } from "../components/Canvas";
 import { Circle, Particle } from "../utils/canvas/figures";
 
-const linearMotion = () => (height, width) => context => {
+const linearMotion = () => (height, width) => (context, checkUnmount) => {
   const x = width * 0.5,
     y = height * 0.5;
 
@@ -33,6 +33,10 @@ const linearMotion = () => (height, width) => context => {
   }
 
   const render = () => {
+    if (checkUnmount() || particles.length < 2) {
+      return;
+    }
+
     context.clearRect(0, 0, width, height);
 
     particles.forEach(particle => particle.render());
