@@ -7,8 +7,10 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:react-pug/all"
+    "plugin:react-pug/all",
+    "plugin:@typescript-eslint/recommended"
   ],
+  "parser": "@typescript-eslint/parser",
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -22,6 +24,13 @@
   },
   "plugins": ["react", "react-pug"],
   "rules": {
+    "@typescript-eslint/indent": ["error", 2],
+    "indent": ["error", 2],
     "react/display-name": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }

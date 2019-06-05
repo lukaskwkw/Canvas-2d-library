@@ -1,13 +1,8 @@
-import React from "react";
+// import React from "react";
+import * as React from "react";
 import { Canvas, Plane } from "../components/Canvas";
 import { Circle, Particle } from "../utils/canvas/figures";
-import {
-  // removeDeadParticles,
-  // checkBoundaries,
-  // bouncingBoundires,
-  bottomEmitter
-  // bottomEmitter
-} from "../utils/math";
+import { bottomEmitter } from "../utils/math";
 
 const topOffset = 80;
 
@@ -34,7 +29,7 @@ const linearMotion = () => (height, width) => (context, checkUnmount) => {
 
     const friction = 0.99 - Math.random() * 0.02;
     const circleSize = 1 + Math.random() * 3;
-    const circle = new Circle(context)(x, y, circleSize);
+    const circle = Circle(context)(x, y, circleSize);
     const weight = circleSize * 5;
     particles.push(
       new Particle(
@@ -78,11 +73,21 @@ const linearMotion = () => (height, width) => (context, checkUnmount) => {
   render();
 };
 
-const VectorTab = () => {
-  return pug`
-    Plane
-      Canvas(width=window.innerWidth height=(window.innerHeight-topOffset) renderer=linearMotion())
-  `;
-};
+const VectorTab = () => (
+  <Plane>
+    <Canvas
+      width={window.innerWidth}
+      height={window.innerHeight - topOffset}
+      renderer={linearMotion()}
+    />
+  </Plane>
+);
+
+// const VectorTab = () => {
+//   return pug`
+//     Plane
+//       Canvas(width=window.innerWidth height=(window.innerHeight-topOffset) renderer=linearMotion())
+//   `;
+// };
 
 export default VectorTab;

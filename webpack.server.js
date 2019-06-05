@@ -2,6 +2,7 @@ const path = require("path");
 const merge = require("webpack-merge");
 const webpackNodeExternals = require("webpack-node-externals");
 const babelLoaderConfig = require("./webpack.babel-loader.js");
+const typescriptLoaderConfig = require("./webpack.typescript-loader");
 
 const config = {
   module: {
@@ -34,4 +35,4 @@ const config = {
   }
 };
 
-module.exports = merge(babelLoaderConfig, config);
+module.exports = merge(babelLoaderConfig, typescriptLoaderConfig, config);

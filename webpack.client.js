@@ -5,6 +5,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const merge = require("webpack-merge");
 
 const babelLoaderConfig = require("./webpack.babel-loader");
+const typescriptLoaderConfig = require("./webpack.typescript-loader");
 
 const PRODUCTION_ENV = process.env.NODE_ENV === "production";
 
@@ -57,4 +58,4 @@ const config = {
     })
   );
 
-module.exports = merge(babelLoaderConfig, config);
+module.exports = merge(babelLoaderConfig, typescriptLoaderConfig, config);
