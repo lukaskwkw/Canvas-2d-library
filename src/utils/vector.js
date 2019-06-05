@@ -1,49 +1,62 @@
-const Vector = (x = 0, y = 1) => {
-  let _x = x,
-    _y = y;
+export class Vector {
+  constructor(x, y) {
+    this._x = x;
+    this._y = y;
+  }
 
-  const setX = x => (_x = x);
-  const getX = () => _x;
-  const setY = y => (_y = y);
-  const getY = () => _y;
+  setX(x) {
+    this._x = x;
+  }
+  getX() {
+    return this._x;
+  }
+  setY(y) {
+    this._y = y;
+  }
+  getY() {
+    return this._y;
+  }
+  getCords() {
+    return { x: this._x, y: this._y };
+  }
+  setCords({ x, y }) {
+    this._x = x;
+    this._y = y;
+  }
 
-  function setAngle(angle) {
+  setAngle(angle) {
     const length = this.getLength();
-    _x = Math.cos(angle) * length;
-    _y = Math.sin(angle) * length;
+    this._x = Math.cos(angle) * length;
+    this._y = Math.sin(angle) * length;
   }
 
-  const getAngle = () => Math.atan2(_y, _x);
-
-  function setLength(length) {
+  setLength(length) {
     const angle = this.getAngle();
-    _x = Math.cos(angle) * length;
-    _y = Math.sin(angle) * length;
+    this._x = Math.cos(angle) * length;
+    this._y = Math.sin(angle) * length;
   }
 
-  const getLength = () => Math.sqrt(_x ** 2 + _y ** 2);
-
-  function addVector(vector2) {
-    return new Vector(_x + vector2.getX(), _y + vector2.getY());
+  getAngle() {
+    return Math.atan2(this._y, this._x);
   }
 
-  function addTo(vector2) {
-    _x += vector2.getX();
-    _y += vector2.getY();
+  getLength() {
+    return Math.sqrt(this._x ** 2 + this._y ** 2);
   }
 
-  return {
-    setX,
-    getX,
-    setY,
-    getY,
-    setAngle,
-    getAngle,
-    setLength,
-    getLength,
-    addVector,
-    addTo
-  };
-};
+  addVector(vector2) {
+    return new Vector(this._x + vector2.getX(), this._y + vector2.getY());
+  }
+
+  addTo(vector2) {
+    this._x += vector2.getX();
+    this._y += vector2.getY();
+  }
+
+  multiplyTo(value) {
+    this._x *= value;
+    this._y *= value;
+  }
+}
 
 export default Vector;
