@@ -1,6 +1,7 @@
 // import { clearArc, CircleCleanFix } from "./trygonometry";
 import Vector from "../vector";
 import { bouncingBoundires } from "../math";
+import { Point } from "../vector";
 
 export const Circle = context => (originX, originY, originSize = 20) => {
   return {
@@ -12,7 +13,53 @@ export const Circle = context => (originX, originY, originSize = 20) => {
   };
 };
 
+export class PlaneSingleton {
+  static instance;
+  planeWidth: number;
+  planeHeight: number;
+  context: object;
+  constructor(planeWidth?, planeHeight?, context?) {
+    if (PlaneSingleton.instance) {
+      return PlaneSingleton.instance;
+    }
+
+    this.planeWidth = planeWidth;
+    this.planeHeight = planeHeight;
+    this.context = context;
+
+    PlaneSingleton.instance = this;
+  }
+}
+
 export class Particle {
+  planeWidth: number;
+  planeHeight: number;
+  x: number;
+  y: number;
+  size: number;
+  speed: number;
+  direction: number;
+  renderer: Function;
+  weight: number;
+  friction: number;
+  otherForce: Point;
+  groundWeight: number;
+  position: Vector;
+  velocity: Vector;
+  gravity: Vector;
+  force: Vector;
+
+  // constructor(
+  //   x: number,
+  //   y: number,
+  //   size: number,
+  //   speed: number,
+  //   direction: number,
+  //   renderer: number,
+  //   weight: number,
+  //   friction: number, // (0-1) 1 means no friction
+  //   otherForce: Point
+  // );
   constructor(
     planeWidth,
     planeHeight,
@@ -25,8 +72,8 @@ export class Particle {
     weight = 1,
     friction = 1, // (0-1) 1 means no friction
     otherForce = {
-      x: Math.random() * 0.01 - 0.005,
-      y: Math.random() * 0.001 - 0.0005
+      x: 0,
+      y: 0
     }
   ) {
     this.planeWidth = planeWidth;
@@ -65,65 +112,13 @@ export class Particle {
   render() {
     this.update();
     bouncingBoundires(
-      { velocity: this.velocity, position: this.position },
+      this.velocity,
+      this.position,
       this.planeWidth,
       this.planeHeight,
       this.size,
-      true,
-      false
+      { checkBottom: false }
     );
     this.renderer(this.position.getX(), this.position.getY(), this.size);
   }
 }
-
-export const ParticleOld = (
-  x,
-  y,
-  size = 5,
-  speed,
-  direction,
-  renderer,
-  weight = 1,
-  friction = 1 // (0-1) 1 means no friction
-  // otherForce = {
-  //   x: Math.random() * 0.01 - 0.005,
-  //   y: Math.random() * 0.001 - 0.0005
-  // }
-) => (width, height) => {
-  const position = new Vector(x, y);
-  const velocity = new Vector(0, 0);
-  const gravity = new Vector(0, 0);
-  // const force = new Vector(otherForce.x, otherForce.y);
-  const groundWeight = 600000;
-
-  velocity.setLength(speed);
-  velocity.setAngle(direction);
-
-  const accelerate = vector => {
-    velocity.addTo(vector);
-  };
-
-  const update = () => {
-    gravity.setY(
-      (weight * groundWeight) / (height - position.getY() + 6000) ** 2
-    );
-    accelerate(gravity);
-    // accelerate(force);
-    velocity.multiplyTo(friction);
-    position.addTo(velocity);
-  };
-
-  const render = () => {
-    update();
-    bouncingBoundires({ velocity, position }, width, height, size);
-    renderer(position.getX(), position.getY(), size);
-  };
-
-  return {
-    render,
-    position,
-    velocity,
-    update,
-    size
-  };
-};

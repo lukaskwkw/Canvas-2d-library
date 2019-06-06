@@ -1,4 +1,11 @@
+export interface Point {
+  x: number;
+  y: number;
+}
+
 export class Vector {
+  _x: number;
+  _y: number;
   constructor(x, y) {
     this._x = x;
     this._y = y;
@@ -16,10 +23,10 @@ export class Vector {
   getY() {
     return this._y;
   }
-  getCords() {
+  getCords(): Point {
     return { x: this._x, y: this._y };
   }
-  setCords({ x, y }) {
+  setCords({ x, y }: Point) {
     this._x = x;
     this._y = y;
   }
