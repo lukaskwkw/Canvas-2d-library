@@ -15,21 +15,37 @@ export const Circle = context => (originX, originY, originSize = 20) => {
 
 export class PlaneSingleton {
   static instance;
-  planeWidth: number;
-  planeHeight: number;
+  width: number;
+  height: number;
   context: object;
-  constructor(planeWidth?, planeHeight?, context?) {
-    if (PlaneSingleton.instance) {
+  constructor(planeWidth?, planeHeight = planeWidth, context?, reset = false) {
+    if (PlaneSingleton.instance && !reset) {
       return PlaneSingleton.instance;
     }
 
-    this.planeWidth = planeWidth;
-    this.planeHeight = planeHeight;
+    this.width = planeWidth;
+    this.height = planeHeight;
     this.context = context;
 
     PlaneSingleton.instance = this;
   }
 }
+
+interface PlaneDimensions {
+  width: number;
+  height: number;
+}
+
+interface ParticleFeatures {
+  size: number;
+  speed?: number;
+  direction?: number;
+  weight?: number;
+  friction?: number; // (0-1) 1 means no friction
+  otherForce?: Point;
+}
+
+const DefaultPlaneSize = 1000;
 
 export class Particle {
   planeWidth: number;
@@ -49,37 +65,64 @@ export class Particle {
   gravity: Vector;
   force: Vector;
 
-  // constructor(
-  //   x: number,
-  //   y: number,
-  //   size: number,
-  //   speed: number,
-  //   direction: number,
-  //   renderer: number,
-  //   weight: number,
-  //   friction: number, // (0-1) 1 means no friction
-  //   otherForce: Point
-  // );
   constructor(
-    planeWidth,
-    planeHeight,
-    x,
-    y,
-    size = 5,
-    speed,
-    direction,
-    renderer,
-    weight = 1,
-    friction = 1, // (0-1) 1 means no friction
-    otherForce = {
-      x: 0,
-      y: 0
-    }
+    particlePosition: Point,
+    particleFeatures: ParticleFeatures,
+    renderer?: Function
+  );
+  constructor(
+    planeDimensions: PlaneDimensions,
+    particlePosition: Point,
+    particleFeatures: ParticleFeatures,
+    renderer?: Function
+  );
+  constructor(
+    positionOrDimensions?: Point | PlaneDimensions,
+    particlePositionOrFeatures?: ParticleFeatures | Point,
+    particleFeaturesOrRenderer?: ParticleFeatures | Function,
+    renderer?: Function
   ) {
-    this.planeWidth = planeWidth;
-    this.planeHeight = planeHeight;
+    const { x, y } =
+      ("x" in positionOrDimensions && positionOrDimensions) ||
+      ("x" in particlePositionOrFeatures && particlePositionOrFeatures);
+
+    const { width, height } =
+      ("width" in positionOrDimensions && positionOrDimensions) ||
+      new PlaneSingleton(DefaultPlaneSize);
+
+    const {
+      size = 5,
+      speed = 10,
+      direction = -Math.PI / 4,
+      weight = size,
+      friction = 0.99,
+      otherForce = { x: 0, y: 0 }
+    } =
+      ("size" in particlePositionOrFeatures && particlePositionOrFeatures) ||
+      ("size" in particleFeaturesOrRenderer && particleFeaturesOrRenderer);
+
+    const { renderer: circleRenderer } =
+      (typeof particleFeaturesOrRenderer === "function" && {
+        renderer: particleFeaturesOrRenderer
+      }) ||
+      ((renderer && { renderer }) || { renderer: undefined });
+
+    this.renderer = circleRenderer;
+
+    if (!circleRenderer) {
+      const { context } = new PlaneSingleton(DefaultPlaneSize);
+      if (!context) {
+        throw new Error(
+          "No context can be obtained from Singleton, nor renderer is provided for Particle!"
+        );
+      }
+
+      this.renderer = Circle(context)(x, y, size).renderer;
+    }
+
+    this.planeWidth = width;
+    this.planeHeight = height;
     this.size = size;
-    this.renderer = renderer;
     this.weight = weight;
     this.friction = friction;
     this.otherForce = otherForce;

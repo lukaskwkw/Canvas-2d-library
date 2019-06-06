@@ -1,21 +1,18 @@
 // import React from "react";
 import * as React from "react";
 import { Canvas, Plane } from "../components/Canvas";
-import { Circle, Particle } from "../utils/canvas/figures";
+import { Particle, PlaneSingleton } from "../utils/canvas/figures";
 import { bottomEmitter } from "../utils/math";
 
 const topOffset = 80;
+const getCanvasWidth = () => window.innerWidth;
+const getCanvasHeight = () => window.innerHeight - topOffset;
 
 const linearMotion = () => (height, width) => (context, checkUnmount) => {
   const x = width * 0.5,
     y = height * 1;
 
-  // const planeS = new PlaneSingletonTest(
-  //   window.innerWidth,
-  //   window.innerHeight - topOffset
-  // );
-
-  // console.info({ planeS });
+  new PlaneSingleton(width, height, context, true);
 
   let particles = [];
   const numbersOfParticles = 1500;
@@ -25,24 +22,22 @@ const linearMotion = () => (height, width) => (context, checkUnmount) => {
 
   for (let i = 1; i < numbersOfParticles; i++) {
     const particleSpeed = particleSpeedFormula();
-    const particleDirection = particleDirectionFormula();
+    // const particleDirection = particleDirectionFormula();
 
     const friction = 0.99 - Math.random() * 0.02;
     const circleSize = 1 + Math.random() * 3;
-    const circle = Circle(context)(x, y, circleSize);
     const weight = circleSize * 5;
+
     particles.push(
       new Particle(
-        width,
-        height - topOffset,
-        x,
-        y,
-        circleSize,
-        particleSpeed,
-        particleDirection,
-        circle.renderer,
-        weight,
-        friction
+        { x, y },
+        {
+          size: circleSize,
+          speed: particleSpeed,
+          // direction: particleDirection,
+          weight,
+          friction
+        }
       )
     );
   }
@@ -76,8 +71,8 @@ const linearMotion = () => (height, width) => (context, checkUnmount) => {
 const VectorTab = () => (
   <Plane>
     <Canvas
-      width={window.innerWidth}
-      height={window.innerHeight - topOffset}
+      width={getCanvasWidth()}
+      height={getCanvasHeight()}
       renderer={linearMotion()}
     />
   </Plane>

@@ -24,6 +24,9 @@
   },
   "plugins": ["react", "react-pug"],
   "rules": {
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "no-dupe-class-members": "warn",
     "@typescript-eslint/indent": ["error", 2],
     "indent": ["error", 2],
     "react/display-name": "off"
