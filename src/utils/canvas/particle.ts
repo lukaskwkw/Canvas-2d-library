@@ -2,80 +2,8 @@
 import Vector from "../vector";
 import { bouncingBoundires, BoundriesSelector } from "../math";
 import { Point } from "../vector";
-
-export const Circle = context => (originX, originY, originSize = 20) => {
-  return {
-    renderer: (x = originX, y = originY, size = originSize, color = "#000") => {
-      context.fillStyle = color;
-      context.beginPath();
-      context.arc(x, y, size, 0, Math.PI * 2, false);
-      context.fill();
-    }
-  };
-};
-
-interface PlaneFeautres {
-  dimensions?: PlaneDimensions;
-  plainGravity?: boolean;
-  boundaries?: BoundriesSelector;
-}
-
-const DefaultPlaneSize = 500;
-
-const PlaneDefaultDimensions = {
-  width: DefaultPlaneSize,
-  height: DefaultPlaneSize
-};
-
-const PlaneDefaultBoundaries = {
-  checkTop: false,
-  checkBottom: false,
-  checkLeft: false,
-  checkRight: false
-};
-
-const PlaneFeautersDefault = {
-  dimensions: PlaneDefaultDimensions,
-  plainGravity: false,
-  boundaries: PlaneDefaultBoundaries
-};
-
-export class PlaneSingleton {
-  static instance;
-  features: PlaneFeautres;
-  context: any;
-
-  constructor(
-    features: PlaneFeautres = PlaneFeautersDefault,
-    context?,
-    reset: boolean = false
-  ) {
-    if (PlaneSingleton.instance && !reset) {
-      return PlaneSingleton.instance;
-    }
-
-    const {
-      dimensions = PlaneDefaultDimensions,
-      plainGravity = false,
-      boundaries = PlaneDefaultBoundaries
-    } = features;
-
-    this.features = {
-      dimensions,
-      plainGravity,
-      boundaries
-    };
-
-    this.context = context;
-
-    PlaneSingleton.instance = this;
-  }
-}
-
-interface PlaneDimensions {
-  width: number;
-  height: number;
-}
+import { PlaneDimensions, PlaneSingleton } from "./plane";
+import { Circle } from "./rendeners";
 
 interface ParticleFeatures {
   size: number;
@@ -89,7 +17,7 @@ interface ParticleFeatures {
   boundary?: BoundriesSelector;
 }
 
-export class Particle {
+class Particle {
   planeWidth: number;
   planeHeight: number;
   x: number;
@@ -248,6 +176,7 @@ export class Particle {
       this.size,
       this.boundary
     );
+
     this.renderer(
       this.position.getX(),
       this.position.getY(),
@@ -256,3 +185,5 @@ export class Particle {
     );
   }
 }
+
+export default Particle;

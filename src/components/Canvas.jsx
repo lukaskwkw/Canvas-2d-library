@@ -7,24 +7,6 @@ export const Plane = styled.div`
   }
 `;
 
-// export class PlaneSingletonTest {
-//   static instance;
-
-//   constructor(width, height) {
-//     if (instance) {
-//       return instance;
-//     }
-
-//     this.width = width;
-//     this.height = height;
-//     this.instance = this;
-//   }
-
-//   foo() {
-//     // ...
-//   }
-// }
-
 const DefaultSize = 1000;
 
 export const Canvas = ({

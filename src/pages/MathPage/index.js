@@ -1,6 +1,6 @@
 import React from "react";
 import { Canvas, Plane } from "../../components/Canvas";
-import { drawRandomLines, sinus, orbit } from "../../utils/canvas/trygonometry";
+import { drawRandomLines, sinus, orbit } from "../../utils/canvas/rendeners";
 import {
   sinusRendererLissajousCurves,
   sinusRendererUpAndDownAndPulse

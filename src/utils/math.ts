@@ -1,4 +1,4 @@
-import { Particle } from "./canvas/figures";
+import Particle from "./canvas/particle";
 import Vector from "./vector";
 
 export const clamp = (val, min, max) => Math.min(Math.max(val, min), max);

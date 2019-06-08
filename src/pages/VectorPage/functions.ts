@@ -1,5 +1,6 @@
-import { PlaneSingleton, Particle } from "../../utils/canvas/figures";
+import Particle from "../../utils/canvas/particle";
 import { bottomEmitter } from "../../utils/math";
+import { PlaneSingleton } from "../../utils/canvas/plane";
 
 export const orbites = () => (height, width) => (context, checkUnmount) => {
   new PlaneSingleton({ dimensions: { width, height } }, context, true);
