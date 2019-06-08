@@ -1,11 +1,12 @@
 // import { clearArc, CircleCleanFix } from "./trygonometry";
 import Vector from "../vector";
-import { bouncingBoundires } from "../math";
+import { bouncingBoundires, BoundriesSelector } from "../math";
 import { Point } from "../vector";
 
 export const Circle = context => (originX, originY, originSize = 20) => {
   return {
-    renderer: (x = originX, y = originY, size = originSize) => {
+    renderer: (x = originX, y = originY, size = originSize, color = "#000") => {
+      context.fillStyle = color;
       context.beginPath();
       context.arc(x, y, size, 0, Math.PI * 2, false);
       context.fill();
@@ -13,18 +14,58 @@ export const Circle = context => (originX, originY, originSize = 20) => {
   };
 };
 
+interface PlaneFeautres {
+  dimensions?: PlaneDimensions;
+  plainGravity?: boolean;
+  boundaries?: BoundriesSelector;
+}
+
+const DefaultPlaneSize = 500;
+
+const PlaneDefaultDimensions = {
+  width: DefaultPlaneSize,
+  height: DefaultPlaneSize
+};
+
+const PlaneDefaultBoundaries = {
+  checkTop: false,
+  checkBottom: false,
+  checkLeft: false,
+  checkRight: false
+};
+
+const PlaneFeautersDefault = {
+  dimensions: PlaneDefaultDimensions,
+  plainGravity: false,
+  boundaries: PlaneDefaultBoundaries
+};
+
 export class PlaneSingleton {
   static instance;
-  width: number;
-  height: number;
-  context: object;
-  constructor(planeWidth?, planeHeight = planeWidth, context?, reset = false) {
+  features: PlaneFeautres;
+  context: any;
+
+  constructor(
+    features: PlaneFeautres = PlaneFeautersDefault,
+    context?,
+    reset: boolean = false
+  ) {
     if (PlaneSingleton.instance && !reset) {
       return PlaneSingleton.instance;
     }
 
-    this.width = planeWidth;
-    this.height = planeHeight;
+    const {
+      dimensions = PlaneDefaultDimensions,
+      plainGravity = false,
+      boundaries = PlaneDefaultBoundaries
+    } = features;
+
+    this.features = {
+      dimensions,
+      plainGravity,
+      boundaries
+    };
+
     this.context = context;
 
     PlaneSingleton.instance = this;
@@ -40,12 +81,13 @@ interface ParticleFeatures {
   size: number;
   speed?: number;
   direction?: number;
-  weight?: number;
+  weight?: number; //0 for no gravity force
   friction?: number; // (0-1) 1 means no friction
   otherForce?: Point;
+  fillColor?: string;
+  planeGravity?: boolean;
+  boundary?: BoundriesSelector;
 }
-
-const DefaultPlaneSize = 1000;
 
 export class Particle {
   planeWidth: number;
@@ -64,6 +106,10 @@ export class Particle {
   velocity: Vector;
   gravity: Vector;
   force: Vector;
+  orbitateTo: Particle;
+  fillColor: string;
+  planeGravity: boolean;
+  boundary: BoundriesSelector;
 
   constructor(
     particlePosition: Point,
@@ -82,21 +128,27 @@ export class Particle {
     particleFeaturesOrRenderer?: ParticleFeatures | Function,
     renderer?: Function
   ) {
+    const plane = new PlaneSingleton();
+
     const { x, y } =
       ("x" in positionOrDimensions && positionOrDimensions) ||
       ("x" in particlePositionOrFeatures && particlePositionOrFeatures);
 
     const { width, height } =
       ("width" in positionOrDimensions && positionOrDimensions) ||
-      new PlaneSingleton(DefaultPlaneSize);
+      plane.features.dimensions;
 
     const {
       size = 5,
       speed = 10,
       direction = -Math.PI / 4,
-      weight = size,
-      friction = 0.99,
-      otherForce = { x: 0, y: 0 }
+      weight = 0,
+      friction = 1,
+      otherForce = { x: 0, y: 0 },
+      fillColor = "#000",
+      planeGravity = undefined,
+      //todo: maybe set everything by Singleton?
+      boundary = undefined
     } =
       ("size" in particlePositionOrFeatures && particlePositionOrFeatures) ||
       ("size" in particleFeaturesOrRenderer && particleFeaturesOrRenderer);
@@ -110,16 +162,22 @@ export class Particle {
     this.renderer = circleRenderer;
 
     if (!circleRenderer) {
-      const { context } = new PlaneSingleton(DefaultPlaneSize);
-      if (!context) {
+      if (!plane.context) {
         throw new Error(
           "No context can be obtained from Singleton, nor renderer is provided for Particle!"
         );
       }
 
-      this.renderer = Circle(context)(x, y, size).renderer;
+      this.renderer = Circle(plane.context)(x, y, size).renderer;
     }
 
+    this.boundary =
+      typeof boundary !== "undefined" ? boundary : plane.features.boundaries;
+    this.planeGravity =
+      typeof planeGravity !== "undefined"
+        ? planeGravity
+        : plane.features.plainGravity;
+    this.fillColor = fillColor;
     this.planeWidth = width;
     this.planeHeight = height;
     this.size = size;
@@ -137,17 +195,45 @@ export class Particle {
     this.velocity.setAngle(direction);
   }
 
-  accelerate(vector) {
+  setOrbiteTo(particle: Particle) {
+    this.orbitateTo = particle;
+  }
+
+  orbitate() {
+    const particle = this.orbitateTo;
+    if (!particle) {
+      return;
+    }
+
+    const distanceY = particle.position.getY() - this.position.getY();
+    const distanceX = particle.position.getX() - this.position.getX();
+    const distance = Math.sqrt(distanceY ** 2 + distanceX ** 2);
+
+    const gravityVector = new Vector(distanceX, distanceY);
+    gravityVector.setAngle(Math.atan2(distanceY, distanceX));
+    gravityVector.setLength(particle.weight / distance ** 2);
+    this.accelerate(gravityVector);
+  }
+
+  accelerate(vector: Vector) {
     this.velocity.addTo(vector);
   }
 
-  update() {
+  gravityToBottomPlane() {
+    if (!this.planeGravity) {
+      return;
+    }
     this.gravity.setY(
       (this.weight * this.groundWeight) /
         (this.planeHeight - this.position.getY() + 6000) ** 2
     );
     this.accelerate(this.gravity);
+  }
+
+  update() {
+    this.gravityToBottomPlane();
     // accelerate(force);
+    this.orbitate();
     this.velocity.multiplyTo(this.friction);
     this.position.addTo(this.velocity);
   }
@@ -160,8 +246,13 @@ export class Particle {
       this.planeWidth,
       this.planeHeight,
       this.size,
-      { checkBottom: false }
+      this.boundary
     );
-    this.renderer(this.position.getX(), this.position.getY(), this.size);
+    this.renderer(
+      this.position.getX(),
+      this.position.getY(),
+      this.size,
+      this.fillColor
+    );
   }
 }
