@@ -1,4 +1,5 @@
 import { BoundriesSelector } from "../math";
+import Controller from "./player";
 
 export interface PlaneDimensions {
   width: number;
@@ -9,11 +10,12 @@ interface PlaneFeautres {
   dimensions?: PlaneDimensions;
   plainGravity?: boolean;
   boundaries?: BoundriesSelector;
+  controller?: Controller;
 }
 
 const DefaultPlaneSize = 500;
 
-const PlaneDefaultDimensions = {
+export const PlaneDefaultDimensions = {
   width: DefaultPlaneSize,
   height: DefaultPlaneSize
 };
@@ -28,7 +30,8 @@ const PlaneDefaultBoundaries = {
 const PlaneFeautersDefault = {
   dimensions: PlaneDefaultDimensions,
   plainGravity: false,
-  boundaries: PlaneDefaultBoundaries
+  boundaries: PlaneDefaultBoundaries,
+  controller: undefined
 };
 
 export class PlaneSingleton {
@@ -52,6 +55,7 @@ export class PlaneSingleton {
     } = features;
 
     this.features = {
+      ...features,
       dimensions,
       plainGravity,
       boundaries

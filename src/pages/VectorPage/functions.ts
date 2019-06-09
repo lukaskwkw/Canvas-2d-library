@@ -1,28 +1,41 @@
 import Particle from "../../utils/canvas/particle";
 import { bottomEmitter } from "../../utils/math";
 import { PlaneSingleton } from "../../utils/canvas/plane";
+import { circlePulse } from "../../utils/canvas/rendeners";
+import Player from "../../utils/canvas/player";
 
 export const orbites = () => (height, width) => (context, checkUnmount) => {
-  new PlaneSingleton({ dimensions: { width, height } }, context, true);
+  new PlaneSingleton(
+    { dimensions: { width, height }, boundaries: { checkBottom: true } },
+    context,
+    true
+  );
 
   const Sun = new Particle(
     { x: width / 2, y: height / 2 },
     {
-      size: 30,
-      weight: 21000,
+      size: 15,
+      weight: 210,
       fillColor: "rgba(200,10,10, 0.5)",
       speed: 0
-    }
+    },
+    circlePulse(30)
   );
 
   //todo maybe set different x or/and sun weight according to screen width/height
   const Satelite = new Particle(
     { x: width / 1.35, y: height / 2 },
-    { size: 5, weight: 1, direction: -Math.PI / 2, speed: 5 }
+    { size: 5, weight: 50, direction: -Math.PI / 2, speed: 5 }
+  );
+
+  const Ship = new Player(
+    { x: width / 1.35, y: height / 2 },
+    { size: 20, weight: 1, direction: -Math.PI / 2, speed: 2 }
   );
 
   Satelite.setOrbiteTo(Sun);
-  Sun.setOrbiteTo(Satelite);
+  Ship.setOrbiteTo(Sun);
+  // Sun.setOrbiteTo(Satelite);
 
   const render = () => {
     if (checkUnmount()) {
@@ -30,7 +43,7 @@ export const orbites = () => (height, width) => (context, checkUnmount) => {
     }
 
     context.clearRect(0, 0, width, height);
-
+    Ship.render();
     Satelite.render();
     Sun.render();
     // removeDeadParticles(particles, width, height);

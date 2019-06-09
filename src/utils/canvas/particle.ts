@@ -2,42 +2,45 @@
 import Vector from "../vector";
 import { bouncingBoundires, BoundriesSelector } from "../math";
 import { Point } from "../vector";
-import { PlaneDimensions, PlaneSingleton } from "./plane";
+import {
+  PlaneDimensions,
+  PlaneSingleton,
+  PlaneDefaultDimensions
+} from "./plane";
 import { Circle } from "./rendeners";
 
-interface ParticleFeatures {
+export interface ParticleFeatures {
   size: number;
   speed?: number;
   direction?: number;
   weight?: number; //0 for no gravity force
   friction?: number; // (0-1) 1 means no friction
-  otherForce?: Point;
   fillColor?: string;
   planeGravity?: boolean;
   boundary?: BoundriesSelector;
 }
 
+const FeaturesDefault = {
+  size: 5,
+  speed: 10,
+  direction: -Math.PI / 4,
+  weight: 0,
+  friction: 1,
+  fillColor: "#000",
+  planeGravity: undefined,
+  angle: 0,
+  boundary: undefined
+};
+
 class Particle {
-  planeWidth: number;
-  planeHeight: number;
-  x: number;
-  y: number;
-  size: number;
-  speed: number;
-  direction: number;
+  planeDimensions: PlaneDimensions = PlaneDefaultDimensions;
   renderer: Function;
-  weight: number;
-  friction: number;
-  otherForce: Point;
   groundWeight: number;
   position: Vector;
   velocity: Vector;
   gravity: Vector;
-  force: Vector;
   orbitateTo: Particle;
-  fillColor: string;
-  planeGravity: boolean;
-  boundary: BoundriesSelector;
+  features: ParticleFeatures = FeaturesDefault;
 
   constructor(
     particlePosition: Point,
@@ -66,20 +69,14 @@ class Particle {
       ("width" in positionOrDimensions && positionOrDimensions) ||
       plane.features.dimensions;
 
-    const {
-      size = 5,
-      speed = 10,
-      direction = -Math.PI / 4,
-      weight = 0,
-      friction = 1,
-      otherForce = { x: 0, y: 0 },
-      fillColor = "#000",
-      planeGravity = undefined,
-      //todo: maybe set everything by Singleton?
-      boundary = undefined
-    } =
+    const features =
       ("size" in particlePositionOrFeatures && particlePositionOrFeatures) ||
       ("size" in particleFeaturesOrRenderer && particleFeaturesOrRenderer);
+
+    this.features = {
+      ...this.features,
+      ...features
+    };
 
     const { renderer: circleRenderer } =
       (typeof particleFeaturesOrRenderer === "function" && {
@@ -96,31 +93,29 @@ class Particle {
         );
       }
 
-      this.renderer = Circle(plane.context)(x, y, size).renderer;
+      this.renderer = Circle(plane.context)(x, y, this.features.size).renderer;
     }
 
-    this.boundary =
-      typeof boundary !== "undefined" ? boundary : plane.features.boundaries;
-    this.planeGravity =
-      typeof planeGravity !== "undefined"
-        ? planeGravity
+    this.features.boundary =
+      typeof this.features.boundary !== "undefined"
+        ? this.features.boundary
+        : plane.features.boundaries;
+
+    this.features.planeGravity =
+      typeof this.features.planeGravity !== "undefined"
+        ? this.features.planeGravity
         : plane.features.plainGravity;
-    this.fillColor = fillColor;
-    this.planeWidth = width;
-    this.planeHeight = height;
-    this.size = size;
-    this.weight = weight;
-    this.friction = friction;
-    this.otherForce = otherForce;
+
+    this.planeDimensions.width = width;
+    this.planeDimensions.height = height;
     this.groundWeight = 600000;
 
     this.position = new Vector(x, y);
     this.velocity = new Vector(0, 0);
     this.gravity = new Vector(0, 0);
-    this.force = new Vector(otherForce.x, otherForce.y);
 
-    this.velocity.setLength(speed);
-    this.velocity.setAngle(direction);
+    this.velocity.setLength(this.features.speed);
+    this.velocity.setAngle(this.features.direction);
   }
 
   setOrbiteTo(particle: Particle) {
@@ -139,7 +134,10 @@ class Particle {
 
     const gravityVector = new Vector(distanceX, distanceY);
     gravityVector.setAngle(Math.atan2(distanceY, distanceX));
-    gravityVector.setLength(particle.weight / distance ** 2);
+    gravityVector.setLength(
+      (particle.features.weight * this.features.weight) / distance ** 2
+    );
+    // this.features.angle = Math.atan2(distanceY, distanceX) + Math.PI / 2;
     this.accelerate(gravityVector);
   }
 
@@ -148,21 +146,20 @@ class Particle {
   }
 
   gravityToBottomPlane() {
-    if (!this.planeGravity) {
+    if (!this.features.planeGravity) {
       return;
     }
     this.gravity.setY(
-      (this.weight * this.groundWeight) /
-        (this.planeHeight - this.position.getY() + 6000) ** 2
+      (this.features.weight * this.groundWeight) /
+        (this.planeDimensions.height - this.position.getY() + 6000) ** 2
     );
     this.accelerate(this.gravity);
   }
 
   update() {
     this.gravityToBottomPlane();
-    // accelerate(force);
     this.orbitate();
-    this.velocity.multiplyTo(this.friction);
+    this.velocity.multiplyTo(this.features.friction);
     this.position.addTo(this.velocity);
   }
 
@@ -171,17 +168,16 @@ class Particle {
     bouncingBoundires(
       this.velocity,
       this.position,
-      this.planeWidth,
-      this.planeHeight,
-      this.size,
-      this.boundary
+      this.planeDimensions,
+      this.features.size,
+      this.features.boundary
     );
 
     this.renderer(
       this.position.getX(),
       this.position.getY(),
-      this.size,
-      this.fillColor
+      this.features.size,
+      this.features.fillColor
     );
   }
 }

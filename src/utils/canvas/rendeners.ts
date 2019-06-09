@@ -203,6 +203,61 @@ export const circleAlpha = (
   };
 };
 
+export const SpaceShip = (
+  originSize = 20,
+  originX = null,
+  originY = null,
+  planeDimensions?: PlaneDimensions,
+  context?: any
+) => {
+  const plane = new PlaneSingleton();
+  const { width, height } = planeDimensions || plane.features.dimensions;
+  const cxt = context || plane.context;
+  return (
+    x: number = originX || width / 2,
+    y: number = originY || height / 2,
+    size: number = originSize,
+    color: string = "black",
+    angle: number,
+    ignite: number
+    // rotateValue: number
+  ) => {
+    // let region = new Path2D();
+    cxt.save();
+    cxt.fillStyle = color;
+    cxt.translate(x, y);
+    cxt.rotate(angle);
+
+    cxt.beginPath();
+    cxt.moveTo(0, -size / 2);
+    cxt.lineTo(size / 2, size / 2);
+    cxt.lineTo(-size / 2, size / 2);
+    cxt.closePath();
+    if (ignite) {
+      cxt.moveTo(0, size / 2);
+      cxt.lineTo(0, ignite * 100 * 10);
+    }
+    // if (rotateValue > 0) {
+    //   cxt.moveTo(0, 0);
+    //   cxt.lineTo(
+    //     (-size / 2) * rotateValue * 25,
+    //     (-size / 2) * rotateValue * 25
+    //   );
+    // }
+    // if (rotateValue < 0) {
+    //   cxt.moveTo(0, 0);
+    //   cxt.lineTo(
+    //     (size / 2) * -rotateValue * 25,
+    //     (-size / 2) * -rotateValue * 25
+    //   );
+    // }
+    // ctx.fillStyle = color;
+    // ctx.fill(region, 'evenodd');
+    cxt.stroke();
+    cxt.restore();
+  };
+};
+
 export const circlePulse = (
   maxRadius = 50,
   minRadius = 20,

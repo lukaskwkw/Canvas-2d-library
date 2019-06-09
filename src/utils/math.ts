@@ -1,5 +1,6 @@
 import Particle from "./canvas/particle";
 import Vector from "./vector";
+import { PlaneDimensions } from "./canvas/plane";
 
 export const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
@@ -24,8 +25,7 @@ export interface BoundriesSelector {
 export const bouncingBoundires = (
   velocity: Vector,
   position: Vector,
-  planeWidth: number,
-  planeHeight: number,
+  planeDimensions: PlaneDimensions,
   offset: number = 0,
   selector: BoundriesSelector
 ) => {
@@ -36,14 +36,15 @@ export const bouncingBoundires = (
     checkRight = true
   } = selector;
   const downgradeBy = -0.9 + Math.random() * 0.3;
+  const { height, width } = planeDimensions;
 
   if (checkTop && topBoundryCheck(position.getY(), offset)) {
     position.setY(offset);
     velocity.setY(velocity.getY() * downgradeBy);
   }
 
-  if (checkBottom && bottomBoundryCheck(position.getY(), planeHeight, offset)) {
-    position.setY(planeHeight - offset);
+  if (checkBottom && bottomBoundryCheck(position.getY(), height, offset)) {
+    position.setY(height - offset);
     velocity.setY(velocity.getY() * downgradeBy);
   }
 
@@ -52,8 +53,8 @@ export const bouncingBoundires = (
     velocity.setX(velocity.getX() * downgradeBy);
   }
 
-  if (checkRight && rightBoundryCheck(position.getX(), planeWidth, offset)) {
-    position.setX(planeWidth - offset);
+  if (checkRight && rightBoundryCheck(position.getX(), width, offset)) {
+    position.setX(width - offset);
     velocity.setX(velocity.getX() * downgradeBy);
   }
 };

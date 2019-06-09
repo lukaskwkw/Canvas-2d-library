@@ -16,7 +16,7 @@ module.exports = {
   //     amd: "react-dom"
   //   }
   // },
-  devtool: "source-map",
+  devtool: "eval-source-map",
 
   module: {
     rules: [
