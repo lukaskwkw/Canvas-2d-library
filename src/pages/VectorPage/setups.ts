@@ -30,12 +30,11 @@ export const orbites = () => (height, width) => (context, checkUnmount) => {
 
   const Ship = new Player(
     { x: width / 1.35, y: height / 2 },
-    { size: 20, weight: 1, direction: -Math.PI / 2, speed: 2 }
+    { size: 20, weight: 10, direction: -Math.PI / 2, speed: 2 }
   );
 
   Satelite.setOrbiteTo(Sun);
   Ship.setOrbiteTo(Sun);
-  // Sun.setOrbiteTo(Satelite);
 
   const render = () => {
     if (checkUnmount()) {
@@ -46,7 +45,6 @@ export const orbites = () => (height, width) => (context, checkUnmount) => {
     Ship.render();
     Satelite.render();
     Sun.render();
-    // removeDeadParticles(particles, width, height);
 
     requestAnimationFrame(render);
   };

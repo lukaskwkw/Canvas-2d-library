@@ -1,6 +1,10 @@
 import Particle from "./canvas/particle";
 import Vector from "./vector";
-import { PlaneDimensions } from "./canvas/plane";
+import {
+  PlaneDefaultBoundaries,
+  PlaneDimensions,
+  PlaneSingleton
+} from "./canvas/plane";
 
 export const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
@@ -56,6 +60,41 @@ export const bouncingBoundires = (
   if (checkRight && rightBoundryCheck(position.getX(), width, offset)) {
     position.setX(width - offset);
     velocity.setX(velocity.getX() * downgradeBy);
+  }
+};
+
+//Fix for top boundary check as without it goes into loop - draw bottom, draw top
+const TopFix = 1;
+
+export const moveToOtherSide = (
+  position: Vector,
+  offset: number = 0,
+  selector: BoundriesSelector = PlaneDefaultBoundaries,
+  planeDimensions?: PlaneDimensions
+) => {
+  const {
+    checkTop = true,
+    checkBottom = true,
+    checkLeft = true,
+    checkRight = true
+  } = selector;
+  const { height, width } =
+    planeDimensions || new PlaneSingleton().features.dimensions;
+
+  if (checkTop && topBoundryCheck(position.getY(), offset)) {
+    position.setY(height - offset - TopFix);
+  }
+
+  if (checkBottom && bottomBoundryCheck(position.getY(), height, offset)) {
+    position.setY(offset);
+  }
+
+  if (checkLeft && leftBoundryCheck(position.getX(), offset)) {
+    position.setX(width - offset);
+  }
+
+  if (checkRight && rightBoundryCheck(position.getX(), width, offset)) {
+    position.setX(offset);
   }
 };
 

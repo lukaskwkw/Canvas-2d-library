@@ -1,7 +1,7 @@
 // import React from "react";
 import * as React from "react";
 import { Canvas, Plane } from "../../components/Canvas";
-import { orbites } from "./functions";
+import { orbites } from "./setups";
 
 const topOffset = 80;
 const getCanvasWidth = () =>

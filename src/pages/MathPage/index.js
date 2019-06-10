@@ -4,7 +4,7 @@ import { drawRandomLines, sinus, orbit } from "../../utils/canvas/rendeners";
 import {
   sinusRendererLissajousCurves,
   sinusRendererUpAndDownAndPulse
-} from "./functions";
+} from "./setups";
 
 const MathTab = () => pug`
   Plane

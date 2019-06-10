@@ -220,7 +220,6 @@ export const SpaceShip = (
     color: string = "black",
     angle: number,
     ignite: number
-    // rotateValue: number
   ) => {
     // let region = new Path2D();
     cxt.save();
@@ -237,20 +236,6 @@ export const SpaceShip = (
       cxt.moveTo(0, size / 2);
       cxt.lineTo(0, ignite * 100 * 10);
     }
-    // if (rotateValue > 0) {
-    //   cxt.moveTo(0, 0);
-    //   cxt.lineTo(
-    //     (-size / 2) * rotateValue * 25,
-    //     (-size / 2) * rotateValue * 25
-    //   );
-    // }
-    // if (rotateValue < 0) {
-    //   cxt.moveTo(0, 0);
-    //   cxt.lineTo(
-    //     (size / 2) * -rotateValue * 25,
-    //     (-size / 2) * -rotateValue * 25
-    //   );
-    // }
     // ctx.fillStyle = color;
     // ctx.fill(region, 'evenodd');
     cxt.stroke();

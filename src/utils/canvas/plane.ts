@@ -20,7 +20,7 @@ export const PlaneDefaultDimensions = {
   height: DefaultPlaneSize
 };
 
-const PlaneDefaultBoundaries = {
+export const PlaneDefaultBoundaries = {
   checkTop: false,
   checkBottom: false,
   checkLeft: false,
