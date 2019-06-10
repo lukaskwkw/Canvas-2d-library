@@ -4,7 +4,7 @@ import { PlaneSingleton } from "./plane";
 import { SpaceShip } from "./rendeners";
 import { moveToOtherSide } from "../math";
 
-const rotateSpeedRatio = () => 0.01 + Math.random() * 0.015;
+const rotateSpeedRatio = () => 0.02 + Math.random() * 0.015;
 const rotateBalancer = () => 0.99;
 const defaultIgniteRatio = 0.005;
 const maxIgniteValue = 0.1;

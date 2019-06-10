@@ -1,5 +1,5 @@
 import Particle from "./canvas/particle";
-import Vector from "./vector";
+import Vector, { Point } from "./vector";
 import {
   PlaneDefaultBoundaries,
   PlaneDimensions,
@@ -26,6 +26,52 @@ export interface BoundriesSelector {
   checkRight?: boolean;
 }
 
+export interface BoundriesAction {
+  actionTop?: Function;
+  actionBottom?: Function;
+  actionLeft?: Function;
+  actionRight?: Function;
+}
+
+const onBoundaryCrossing = (
+  position: Point,
+  offset: number,
+  boundariesAction: Function | BoundriesAction,
+  planeDimensions?: PlaneDimensions
+) => {
+  const oneFunctionForAll =
+    typeof boundariesAction === "function" ? boundariesAction : undefined;
+
+  const { actionTop, actionBottom, actionLeft, actionRight } =
+    typeof boundariesAction !== "function" && boundariesAction;
+
+  const { x, y } = position;
+  const { width, height } =
+    planeDimensions || new PlaneSingleton().features.dimensions;
+
+  if ((oneFunctionForAll || actionTop) && topBoundryCheck(y, offset)) {
+    oneFunctionForAll ? oneFunctionForAll() : actionTop();
+  }
+
+  if (
+    (oneFunctionForAll || actionBottom) &&
+    bottomBoundryCheck(y, height, offset)
+  ) {
+    oneFunctionForAll ? oneFunctionForAll() : actionBottom();
+  }
+
+  if ((oneFunctionForAll || actionLeft) && leftBoundryCheck(x, offset)) {
+    oneFunctionForAll ? oneFunctionForAll() : actionLeft();
+  }
+
+  if (
+    (oneFunctionForAll || actionRight) &&
+    rightBoundryCheck(x, width, offset)
+  ) {
+    oneFunctionForAll ? oneFunctionForAll() : actionRight();
+  }
+};
+
 export const bouncingBoundires = (
   velocity: Vector,
   position: Vector,
@@ -42,25 +88,34 @@ export const bouncingBoundires = (
   const downgradeBy = -0.9 + Math.random() * 0.3;
   const { height, width } = planeDimensions;
 
-  if (checkTop && topBoundryCheck(position.getY(), offset)) {
-    position.setY(offset);
-    velocity.setY(velocity.getY() * downgradeBy);
-  }
+  const actions = {
+    actionTop: () => {
+      if (checkTop) {
+        position.setY(offset);
+        velocity.setY(velocity.getY() * downgradeBy);
+      }
+    },
+    actionBottom: () => {
+      if (checkBottom) {
+        position.setY(height - offset);
+        velocity.setY(velocity.getY() * downgradeBy);
+      }
+    },
+    actionLeft: () => {
+      if (checkLeft) {
+        position.setX(offset);
+        velocity.setX(velocity.getX() * downgradeBy);
+      }
+    },
+    actionRight: () => {
+      if (checkRight) {
+        position.setX(width - offset);
+        velocity.setX(velocity.getX() * downgradeBy);
+      }
+    }
+  };
 
-  if (checkBottom && bottomBoundryCheck(position.getY(), height, offset)) {
-    position.setY(height - offset);
-    velocity.setY(velocity.getY() * downgradeBy);
-  }
-
-  if (checkLeft && leftBoundryCheck(position.getX(), offset)) {
-    position.setX(offset);
-    velocity.setX(velocity.getX() * downgradeBy);
-  }
-
-  if (checkRight && rightBoundryCheck(position.getX(), width, offset)) {
-    position.setX(width - offset);
-    velocity.setX(velocity.getX() * downgradeBy);
-  }
+  onBoundaryCrossing(position.getCords(), offset, actions);
 };
 
 //Fix for top boundary check as without it goes into loop - draw bottom, draw top
@@ -81,56 +136,44 @@ export const moveToOtherSide = (
   const { height, width } =
     planeDimensions || new PlaneSingleton().features.dimensions;
 
-  if (checkTop && topBoundryCheck(position.getY(), offset)) {
-    position.setY(height - offset - TopFix);
-  }
+  const actions = {
+    actionTop: () => checkTop && position.setY(height - offset - TopFix),
+    actionBottom: () => checkBottom && position.setY(offset),
+    actionLeft: () => checkLeft && position.setX(width - offset),
+    actionRight: () => checkRight && position.setX(offset)
+  };
 
-  if (checkBottom && bottomBoundryCheck(position.getY(), height, offset)) {
-    position.setY(offset);
-  }
-
-  if (checkLeft && leftBoundryCheck(position.getX(), offset)) {
-    position.setX(width - offset);
-  }
-
-  if (checkRight && rightBoundryCheck(position.getX(), width, offset)) {
-    position.setX(offset);
-  }
+  onBoundaryCrossing(position.getCords(), offset, actions);
 };
 
-export const removeDeadParticles = (
-  particles: Particle[],
-  width: number,
-  height: number
-) => {
+export const removeDeadParticles = (particles: Particle[], offset?: number) => {
   for (let index = 0; index < particles.length; index++) {
     const particle = particles[index];
-    const topBoundryCheck = particle.position.getY() < 0;
-    const bottomBoundryCheck = particle.position.getY() > height;
-    const leftBoundryCheck = particle.position.getX() < 0;
-    const rightBoundryCheck = particle.position.getX() > width;
-    if (
-      topBoundryCheck ||
-      bottomBoundryCheck ||
-      leftBoundryCheck ||
-      rightBoundryCheck
-    ) {
-      particles.splice(index, 1);
-    }
+    const position = particle.position.getCords();
+    onBoundaryCrossing(position, offset || particle.features.size, () =>
+      particles.splice(index, 1)
+    );
   }
 };
 
-export const bottomEmitter = (
-  particle: Particle,
-  originX: number,
-  originY: number,
+export const emmitter = (
+  positionToSetAfter: Point,
   speed: number,
   angle: number,
-  planeHeight: number
+  particle: Particle,
+  offset?: number
 ) => {
-  if (bottomBoundryCheck(particle.position.getY(), planeHeight)) {
-    particle.position.setCords({ x: originX, y: originY });
+  const { x, y } = positionToSetAfter;
+
+  const emitParticle = () => {
+    particle.position.setCords({ x, y });
     particle.velocity.setLength(speed);
     particle.velocity.setAngle(angle);
-  }
+  };
+
+  onBoundaryCrossing(
+    particle.position.getCords(),
+    offset || particle.features.size,
+    emitParticle
+  );
 };
