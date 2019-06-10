@@ -234,7 +234,7 @@ export const SpaceShip = (
     cxt.closePath();
     if (ignite) {
       cxt.moveTo(0, size / 2);
-      cxt.lineTo(0, ignite * 100 * 10);
+      cxt.lineTo(0, ignite * 400);
     }
     // ctx.fillStyle = color;
     // ctx.fill(region, 'evenodd');

@@ -27,12 +27,14 @@ export const level = () => (height, width) => (context, checkUnmount) => {
   );
 
   const Ship = new Player(
-    { x: width / 1.35, y: height / 2 },
-    { size: 20, weight: 10, direction: -Math.PI / 2, speed: 2 }
+    { x: width / 1.1, y: height / 2 },
+    { size: 20, weight: 1, direction: -Math.PI / 2, speed: 8 }
   );
 
-  Satelite.setOrbiteTo(Sun);
-  Ship.setOrbiteTo(Sun);
+  Satelite.setOrbiteTowards(Sun);
+  Satelite.setOrbiteTowards(Ship);
+  Ship.setOrbiteTowards(Sun);
+  Ship.setOrbiteTowards(Satelite);
 
   const render = () => {
     if (checkUnmount()) {

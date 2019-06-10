@@ -32,14 +32,25 @@ const FeaturesDefault = {
   boundary: undefined
 };
 
+const groundWeight = 600000;
+const groundRadius = 6000;
+const gravityOrbiteEquation = (m1, m2, distance) =>
+  (m1 * m2 * 0.08) / distance ** 2;
+const planeGravityEquation = (particleWeight, particleYPosition, planeHeight) =>
+  (particleWeight * groundWeight) /
+  (planeHeight - particleYPosition + groundRadius) ** 2;
+
+interface OrbitePoint extends Point {
+  weight: number;
+}
+
 class Particle {
   planeDimensions: PlaneDimensions = PlaneDefaultDimensions;
   renderer: Function;
-  groundWeight: number;
   position: Vector;
   velocity: Vector;
   gravity: Vector;
-  orbitateTo: Particle;
+  orbitateTowards: Particle[] = [];
   features: ParticleFeatures = FeaturesDefault;
 
   constructor(
@@ -108,7 +119,6 @@ class Particle {
 
     this.planeDimensions.width = width;
     this.planeDimensions.height = height;
-    this.groundWeight = 600000;
 
     this.position = new Vector(x, y);
     this.velocity = new Vector(0, 0);
@@ -118,27 +128,31 @@ class Particle {
     this.velocity.setAngle(this.features.direction);
   }
 
-  setOrbiteTo(particle: Particle) {
-    this.orbitateTo = particle;
+  setOrbiteTowards(particle: Particle) {
+    this.orbitateTowards.push(particle);
   }
 
   orbitate() {
-    const particle = this.orbitateTo;
-    if (!particle) {
+    if (this.orbitateTowards.length === 0) {
       return;
     }
 
-    const distanceY = particle.position.getY() - this.position.getY();
-    const distanceX = particle.position.getX() - this.position.getX();
-    const distance = Math.sqrt(distanceY ** 2 + distanceX ** 2);
+    this.orbitateTowards.forEach((particle: Particle) => {
+      const distanceY = particle.position.getY() - this.position.getY();
+      const distanceX = particle.position.getX() - this.position.getX();
+      const distance = Math.sqrt(distanceY ** 2 + distanceX ** 2);
 
-    const gravityVector = new Vector(distanceX, distanceY);
-    gravityVector.setAngle(Math.atan2(distanceY, distanceX));
-    gravityVector.setLength(
-      (particle.features.weight * this.features.weight) / distance ** 2
-    );
-    // this.features.angle = Math.atan2(distanceY, distanceX) + Math.PI / 2;
-    this.accelerate(gravityVector);
+      const gravityVector = new Vector(distanceX, distanceY);
+      gravityVector.setAngle(Math.atan2(distanceY, distanceX));
+      gravityVector.setLength(
+        gravityOrbiteEquation(
+          particle.features.weight,
+          this.features.weight,
+          distance
+        )
+      );
+      this.accelerate(gravityVector);
+    });
   }
 
   accelerate(vector: Vector) {
@@ -150,8 +164,11 @@ class Particle {
       return;
     }
     this.gravity.setY(
-      (this.features.weight * this.groundWeight) /
-        (this.planeDimensions.height - this.position.getY() + 6000) ** 2
+      planeGravityEquation(
+        this.features.weight,
+        this.position.getY(),
+        this.planeDimensions.height
+      )
     );
     this.accelerate(this.gravity);
   }
