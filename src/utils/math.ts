@@ -6,6 +6,53 @@ import {
   PlaneSingleton
 } from "./canvas/plane";
 
+export const randomX = (
+  offset: number = 0,
+  planeDimensions: PlaneDimensions = new PlaneSingleton().features.dimensions
+) => offset + Math.random() * (planeDimensions.width - offset - offset);
+
+export const randomY = (
+  offset: number = 0,
+  planeDimensions: PlaneDimensions = new PlaneSingleton().features.dimensions
+) => offset + Math.random() * (planeDimensions.height - offset - offset);
+
+export const randomPoint = (
+  offset: number = 0,
+  planeDimensions?: PlaneDimensions
+): Point => {
+  const { width, height } =
+    planeDimensions || new PlaneSingleton().features.dimensions;
+  return {
+    x: offset + Math.random() * (width - offset - offset),
+    y: offset + Math.random() * (height - offset - offset)
+  };
+};
+
+export const connectDots = (
+  points: Point[],
+  context: CanvasRenderingContext2D = new PlaneSingleton().context
+) => {
+  for (let index = 0; index < points.length - 1; index++) {
+    const point = points[index];
+    const nextPoint = points[index + 1];
+    context.moveTo(point.x, point.y);
+    context.lineTo(nextPoint.x, nextPoint.y);
+  }
+};
+
+export const connectDotsAndStroke = (
+  points: Point[],
+  context: CanvasRenderingContext2D = new PlaneSingleton().context
+) => {
+  context.beginPath();
+  connectDots(points);
+  context.stroke();
+};
+
+export const lineInterpolation = (t: number, p1: Point, p2: Point): Point => {
+  return { x: (1 - t) * p1.x + t * p2.x, y: (1 - t) * p1.y + t * p2.y };
+};
+
 export const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
 export const topBoundryCheck = (y, offset = 0) => y - offset < 0;

@@ -3,7 +3,8 @@ import * as React from "react";
 import { Canvas, Plane } from "../../components/Canvas";
 // import { level } from "./level";
 // import { fountain } from "./setups";
-import { orbitingFountain } from "./orbitingFountain";
+// import { orbitingFountain } from "./orbitingFountain";
+import { bezier } from "./bezier";
 
 const topOffset = 80;
 const getCanvasWidth = () =>
@@ -16,7 +17,7 @@ const VectorTab = () => (
     <Canvas
       width={getCanvasWidth()}
       height={getCanvasHeight()}
-      renderer={orbitingFountain()}
+      renderer={bezier()}
     />
   </Plane>
 );

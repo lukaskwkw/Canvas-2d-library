@@ -104,7 +104,10 @@ class Particle {
         );
       }
 
-      this.renderer = Circle(plane.context)(x, y, this.features.size).renderer;
+      this.renderer = Circle(plane.context)(
+        { x, y },
+        this.features.size
+      ).renderer;
     }
 
     this.features.boundary =

@@ -1,12 +1,24 @@
 import { PlaneDimensions, PlaneSingleton } from "./plane";
+import { Point } from "../vector";
 
-export const Circle = context => (originX, originY, originSize = 20) => {
+export const Circle = (context?: any) => (
+  originPosition: Point,
+  originSize = 20,
+  originColor = "#000"
+) => {
+  const cxt = context || new PlaneSingleton().context;
+
   return {
-    renderer: (x = originX, y = originY, size = originSize, color = "#000") => {
-      context.fillStyle = color;
-      context.beginPath();
-      context.arc(x, y, size, 0, Math.PI * 2, false);
-      context.fill();
+    renderer: (
+      x = originPosition.x,
+      y = originPosition.y,
+      size = originSize,
+      color = originColor
+    ) => {
+      cxt.fillStyle = color;
+      cxt.beginPath();
+      cxt.arc(x, y, size, 0, Math.PI * 2, false);
+      cxt.fill();
     }
   };
 };
