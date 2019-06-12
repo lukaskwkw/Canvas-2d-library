@@ -1,7 +1,7 @@
 import { PlaneDimensions, PlaneSingleton } from "./plane";
 import { Point } from "../vector";
 
-export const Circle = (context?: any) => (
+export const Circle = (context?: CanvasRenderingContext2D) => (
   originPosition: Point,
   originSize = 20,
   originColor = "#000"
@@ -84,7 +84,7 @@ export const circleUpAndDown = (
   originY = null,
   circleOffset = null,
   planeDimensions?: PlaneDimensions,
-  context?: any
+  context?: CanvasRenderingContext2D
 ) => {
   const plane = new PlaneSingleton();
   const { width, height } = planeDimensions || plane.features.dimensions;
@@ -117,7 +117,7 @@ export const circleUpAndDownAndPulse = (
   originX = null,
   originY = null,
   planeDimensions?: PlaneDimensions,
-  context?: any
+  context?: CanvasRenderingContext2D
 ) => {
   const plane = new PlaneSingleton();
   const { width, height } = planeDimensions || plane.features.dimensions;
@@ -156,7 +156,7 @@ export const lissajousCurves = (
   centreX = undefined,
   centreY = undefined,
   planeDimensions?: PlaneDimensions,
-  context?: any
+  context?: CanvasRenderingContext2D
 ) => {
   const plane = new PlaneSingleton();
   const { width, height } = planeDimensions || plane.features.dimensions;
@@ -189,7 +189,7 @@ export const circleAlpha = (
   radius = 100,
   colorRGB = "100, 001, 100",
   planeDimensions?: PlaneDimensions,
-  context?: any
+  context?: CanvasRenderingContext2D
 ) => {
   const plane = new PlaneSingleton();
   const { width, height } = planeDimensions || plane.features.dimensions;
@@ -220,7 +220,7 @@ export const SpaceShip = (
   originX = null,
   originY = null,
   planeDimensions?: PlaneDimensions,
-  context?: any
+  context?: CanvasRenderingContext2D
 ) => {
   const plane = new PlaneSingleton();
   const { width, height } = planeDimensions || plane.features.dimensions;
@@ -261,7 +261,7 @@ export const circlePulse = (
   x = null,
   y = null,
   planeDimensions?: PlaneDimensions,
-  context?: any
+  context?: CanvasRenderingContext2D
 ) => {
   const plane = new PlaneSingleton();
   const { width, height } = planeDimensions || plane.features.dimensions;

@@ -13,7 +13,7 @@ const maxRotateValue = 0.2;
 const RotateFix = Math.PI / 2;
 
 class Player extends Particle {
-  context: any;
+  context: CanvasRenderingContext2D;
   angle: number = 0;
   ignite: boolean;
   jetDrive: Vector = new Vector(0, defaultIgniteRatio);

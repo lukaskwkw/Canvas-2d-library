@@ -37,7 +37,7 @@ const PlaneFeautersDefault = {
 export class PlaneSingleton {
   static instance;
   features: PlaneFeautres;
-  context: any;
+  context: CanvasRenderingContext2D;
 
   constructor(
     features: PlaneFeautres = PlaneFeautersDefault,
