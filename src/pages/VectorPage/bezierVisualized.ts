@@ -84,11 +84,7 @@ export const bezier = () => (height, width) => (context, checkUnmount) => {
     circle8(interpolatedPointP3P4, 8, "yellow").renderer();
     circle7(interpolatedRedGreen, 8, "blue").renderer();
     circleGreenYellow(interpolatedPointOfGreenYellow, 8, "blue").renderer();
-    circleBlueBlue(
-      interpolatedBlueBlue,
-      8,
-      "rgba(100, 100, 100, 0.5"
-    ).renderer();
+    circleBlueBlue(interpolatedBlueBlue, 12, "#ff9999").renderer();
 
     t += interpolationSpeed;
 

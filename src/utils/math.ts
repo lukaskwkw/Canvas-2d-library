@@ -53,6 +53,188 @@ export const lineInterpolation = (t: number, p1: Point, p2: Point): Point => {
   return { x: (1 - t) * p1.x + t * p2.x, y: (1 - t) * p1.y + t * p2.y };
 };
 
+export const quadricBezierIteration = (
+  t: number,
+  startPoint: Point,
+  controlPoint: Point,
+  endPoint: Point,
+  pFinal
+) => {
+  pFinal = pFinal || {};
+  pFinal.x =
+    Math.pow(1 - t, 2) * startPoint.x +
+    (1 - t) * 2 * t * controlPoint.x +
+    t * t * endPoint.x;
+  pFinal.y =
+    Math.pow(1 - t, 2) * startPoint.y +
+    (1 - t) * 2 * t * controlPoint.y +
+    t * t * endPoint.y;
+  return pFinal;
+};
+
+export const cubicBezierIteration = (
+  t: number,
+  p0: Point,
+  p1: Point,
+  p2: Point,
+  p3: Point,
+  pFinal
+) => {
+  pFinal = pFinal || {};
+  pFinal.x =
+    Math.pow(1 - t, 3) * p0.x +
+    Math.pow(1 - t, 2) * 3 * t * p1.x +
+    (1 - t) * 3 * t * t * p2.x +
+    t * t * t * p3.x;
+  pFinal.y =
+    Math.pow(1 - t, 3) * p0.y +
+    Math.pow(1 - t, 2) * 3 * t * p1.y +
+    (1 - t) * 3 * t * t * p2.y +
+    t * t * t * p3.y;
+  return pFinal;
+};
+
+export const moveAlongMultiQuadricBaziers = (
+  intervals: number,
+  points: Point[]
+) => {
+  const pointsLength = points.length;
+
+  let t = 1 / intervals;
+  const [firstStartPoint, firstControlPoint, firstEndPoint] = points;
+
+  //Must be at least 4 points todo: make compatibile with min 3 points
+  if (pointsLength < 4) {
+    return () => firstStartPoint;
+  }
+
+  const firstMiddleEnd = {
+    x: (firstControlPoint.x + firstEndPoint.x) / 2,
+    y: (firstControlPoint.y + firstEndPoint.y) / 2
+  };
+
+  const penultimatePoint = points[pointsLength - 2];
+  const lastPoint = points[pointsLength - 1];
+  let index = 1;
+
+  return (): Point => {
+    if (t > 1) {
+      t = 1 / intervals;
+      index++;
+    }
+    if (index + 2 > pointsLength) {
+      return points[pointsLength - 1];
+    }
+    t += 1 / intervals;
+
+    if (index < 2) {
+      return quadricBezierIteration(
+        t,
+        firstStartPoint,
+        firstControlPoint,
+        firstMiddleEnd,
+        false
+      );
+    }
+
+    const startPoint = points[index - 1];
+    const controlPoint = points[index];
+    const startPointMiddle = {
+      x: (startPoint.x + controlPoint.x) / 2,
+      y: (startPoint.y + controlPoint.y) / 2
+    };
+
+    if (index + 3 > pointsLength) {
+      return quadricBezierIteration(
+        t,
+        startPointMiddle,
+        penultimatePoint,
+        lastPoint,
+        false
+      );
+    }
+
+    const endPoint = points[index + 1];
+    const endPointMiddle = {
+      x: (controlPoint.x + endPoint.x) / 2,
+      y: (controlPoint.y + endPoint.y) / 2
+    };
+
+    return quadricBezierIteration(
+      t,
+      startPointMiddle,
+      controlPoint,
+      endPointMiddle,
+      false
+    );
+  };
+};
+
+export const drawMultiMiddleQudricBeziers = (
+  points: Point[],
+  context: CanvasRenderingContext2D = new PlaneSingleton().context
+): void => {
+  const lengthOfPoints = points.length;
+  if (lengthOfPoints < 3) {
+    return;
+  }
+  const [firstPoint] = points;
+  context.beginPath();
+  context.moveTo(firstPoint.x, firstPoint.y);
+  let index = 1;
+  for (index; index < points.length - 2; index++) {
+    const controlPoint = points[index];
+    const endPoint = points[index + 1];
+    context.quadraticCurveTo(
+      controlPoint.x,
+      controlPoint.y,
+      (controlPoint.x + endPoint.x) / 2,
+      (controlPoint.y + endPoint.y) / 2
+    );
+  }
+
+  const penultimatePoint = points[index];
+  const lastPoint = points[index + 1];
+  context.quadraticCurveTo(
+    penultimatePoint.x,
+    penultimatePoint.y,
+    lastPoint.x,
+    lastPoint.y
+  );
+  context.stroke();
+};
+
+export const drawCubicBezier = (
+  intervals: number,
+  pointA: Point,
+  pointB: Point,
+  pointC: Point,
+  pointD: Point,
+  context: CanvasRenderingContext2D = new PlaneSingleton().context
+) => {
+  context.beginPath();
+  for (let t = 1; t <= intervals - 1; t++) {
+    const point = cubicBezierIteration(
+      t / intervals,
+      pointA,
+      pointB,
+      pointC,
+      pointD,
+      false
+    );
+    const nextPoint = cubicBezierIteration(
+      (t + 1) / intervals,
+      pointA,
+      pointB,
+      pointC,
+      pointD,
+      false
+    );
+    connectDots([point, nextPoint]);
+  }
+  context.stroke();
+};
+
 export const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
 export const topBoundryCheck = (y, offset = 0) => y - offset < 0;

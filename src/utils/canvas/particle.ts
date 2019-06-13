@@ -194,8 +194,7 @@ class Particle {
     );
 
     this.renderer(
-      this.position.getX(),
-      this.position.getY(),
+      this.position.getCords(),
       this.features.size,
       this.features.fillColor
     );

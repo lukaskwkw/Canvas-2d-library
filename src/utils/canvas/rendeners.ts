@@ -275,12 +275,12 @@ export const circlePulse = (
   const speed = 0.05;
   let radius = 0;
 
-  return (x = startX, y = startY, size = minRadius, color) => {
+  return (point: Point = { x: startX, y: startY }, size = minRadius, color) => {
     radius = offset + size / 2 + Math.sin(radian) * (offset - size / 2);
 
     cxt.fillStyle = color;
     cxt.beginPath();
-    cxt.arc(x, y, radius, 0, Math.PI * 2, false);
+    cxt.arc(point.x, point.y, radius, 0, Math.PI * 2, false);
     cxt.fill();
 
     radian += speed;
