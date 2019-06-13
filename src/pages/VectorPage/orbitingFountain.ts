@@ -1,5 +1,9 @@
 import Particle from "../../utils/canvas/particle";
-import { emmitter } from "../../utils/math";
+import {
+  emmitter,
+  randomPoint,
+  moveAlongMultiQuadricBaziers
+} from "../../utils/math";
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import { circlePulse } from "../../utils/canvas/rendeners";
 
@@ -21,12 +25,6 @@ export const orbitingFountain = () => (height, width) => (
     true
   );
 
-  let particles = [];
-  const numbersOfParticles = 2500;
-  const particleSpeedFormula = () => 2 + Math.random() * 5;
-  const particleDirectionFormula = () =>
-    Math.PI / 2 + (Math.PI / 2) * (Math.random() - 0.5);
-
   const Sun = new Particle(
     { x: width / 1.2, y: height / 4 },
     {
@@ -43,7 +41,7 @@ export const orbitingFountain = () => (height, width) => (
     { x: width / 6, y: height / 2 },
     {
       size: 55,
-      weight: 114100,
+      weight: -314100,
       fillColor: "rgba(100,100,10, 0.5)",
       speed: 0,
       planeGravity: false
@@ -55,7 +53,7 @@ export const orbitingFountain = () => (height, width) => (
     { x: width / 2, y: height / 1.1 },
     {
       size: 35,
-      weight: 155520,
+      weight: 455520,
       fillColor: "rgba(0,100,100, 0.2)",
       speed: 0,
       planeGravity: false
@@ -67,13 +65,19 @@ export const orbitingFountain = () => (height, width) => (
     { x: width / 2, y: height / 8 },
     {
       size: 22,
-      weight: 555520,
+      weight: -255520,
       fillColor: "rgba(10,255,100, 0.92)",
       speed: 0,
       planeGravity: false
     },
     circlePulse(30)
   );
+
+  let particles = [];
+  const numbersOfParticles = 2500;
+  const particleSpeedFormula = () => 2 + Math.random() * 5;
+  const particleDirectionFormula = () =>
+    Math.PI / 2 + (Math.PI / 2) * (Math.random() - 0.5);
 
   for (let i = 1; i < numbersOfParticles; i++) {
     const circleSize = 1 + Math.random() * 3;
@@ -91,6 +95,44 @@ export const orbitingFountain = () => (height, width) => (
     particle.setOrbiteTowards(Sun4);
     particles.push(particle);
   }
+
+  const numberOfPointsForIteration = 1009;
+
+  const testArray = Array.from({ length: numberOfPointsForIteration }, () =>
+    randomPoint(20)
+  );
+
+  const hugeGreen = Array.from({ length: numberOfPointsForIteration }, () =>
+    randomPoint(20)
+  );
+
+  const redBaron = Array.from({ length: numberOfPointsForIteration }, () =>
+    randomPoint(20)
+  );
+
+  const blueBilbo = Array.from({ length: numberOfPointsForIteration }, () =>
+    randomPoint(20)
+  );
+
+  //less = faster
+  const interpolationIntervals = 45;
+  const mulitQuadricMovePoint = moveAlongMultiQuadricBaziers(
+    interpolationIntervals,
+    testArray
+  );
+  const mulitQuadricRedBaron = moveAlongMultiQuadricBaziers(
+    interpolationIntervals,
+    redBaron
+  );
+  const mulitQuadricBlueBilbo = moveAlongMultiQuadricBaziers(
+    interpolationIntervals,
+    blueBilbo
+  );
+  const mulitQuadricHugeGreen = moveAlongMultiQuadricBaziers(
+    interpolationIntervals,
+    hugeGreen
+  );
+
   const render = () => {
     if (checkUnmount() || particles.length < 2) {
       return;
@@ -101,7 +143,17 @@ export const orbitingFountain = () => (height, width) => (
     Sun.render();
     Sun2.render();
     Sun3.render();
+
+    const pulsarPosition = mulitQuadricMovePoint();
+    const redBaronPosition = mulitQuadricRedBaron();
+    const blueBilboPosition = mulitQuadricBlueBilbo();
+    const hugeGreenPosition = mulitQuadricHugeGreen();
+    Sun4.position.setCords(pulsarPosition);
+    Sun3.position.setCords(blueBilboPosition);
+    Sun.position.setCords(redBaronPosition);
+    Sun2.position.setCords(hugeGreenPosition);
     Sun4.render();
+
     particles.forEach((particle: Particle) => {
       particle.render();
       emmitter(

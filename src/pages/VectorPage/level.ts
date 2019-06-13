@@ -22,7 +22,7 @@ export const level = () => (height, width) => (
     { x: width / 2, y: height / 2 },
     {
       size: 15,
-      weight: 510,
+      weight: 1310,
       fillColor: "rgba(200,10,10, 0.5)",
       speed: 0
     },
@@ -44,7 +44,11 @@ export const level = () => (height, width) => (
   Ship.setOrbiteTowards(Sun);
   Ship.setOrbiteTowards(Satelite);
 
-  const testArray = Array.from({ length: 24 }, () => randomPoint(20));
+  const numberOfPointsForIteration = 50;
+
+  const testArray = Array.from({ length: numberOfPointsForIteration }, () =>
+    randomPoint(20)
+  );
 
   //less = faster
   const interpolationIntervals = 150;

@@ -3,17 +3,16 @@ import { Point } from "../vector";
 
 export const Circle = (context?: CanvasRenderingContext2D) => (
   originPosition: Point,
-  originSize = 20,
-  originColor = "#000"
+  originSize: number = 20,
+  originColor: string = "#000"
 ) => {
   const cxt = context || new PlaneSingleton().context;
 
   return {
     renderer: (
-      x = originPosition.x,
-      y = originPosition.y,
-      size = originSize,
-      color = originColor
+      { x, y }: Point = originPosition,
+      size: number = originSize,
+      color: string = originColor
     ) => {
       cxt.fillStyle = color;
       cxt.beginPath();
