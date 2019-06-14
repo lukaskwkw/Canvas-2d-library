@@ -115,7 +115,7 @@ export const orbitingFountain = () => (height, width) => (
   );
 
   //less = faster
-  const interpolationIntervals = 45;
+  const interpolationIntervals = 450;
   const mulitQuadricMovePoint = moveAlongMultiQuadricBaziers(
     interpolationIntervals,
     testArray
