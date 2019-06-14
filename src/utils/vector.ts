@@ -11,13 +11,13 @@ export class Vector {
     this._y = y;
   }
 
-  setX(x) {
+  setX(x: number) {
     this._x = x;
   }
   getX() {
     return this._x;
   }
-  setY(y) {
+  setY(y: number) {
     this._y = y;
   }
   getY() {
@@ -31,13 +31,13 @@ export class Vector {
     this._y = y;
   }
 
-  setAngle(angle) {
+  setAngle(angle: number) {
     const length = this.getLength();
     this._x = Math.cos(angle) * length;
     this._y = Math.sin(angle) * length;
   }
 
-  setLength(length) {
+  setLength(length: number) {
     const angle = this.getAngle();
     this._x = Math.cos(angle) * length;
     this._y = Math.sin(angle) * length;
@@ -51,16 +51,24 @@ export class Vector {
     return Math.sqrt(this._x ** 2 + this._y ** 2);
   }
 
-  addVector(vector2) {
+  addVector(vector2: Vector) {
     return new Vector(this._x + vector2.getX(), this._y + vector2.getY());
   }
 
-  addTo(vector2) {
+  substractVector(vector2: Vector) {
+    return new Vector(this._x - vector2.getX(), this._y - vector2.getY());
+  }
+
+  multiply(value: number) {
+    return new Vector(this._x * value, this._y * value);
+  }
+
+  addTo(vector2: Vector) {
     this._x += vector2.getX();
     this._y += vector2.getY();
   }
 
-  multiplyTo(value) {
+  multiplyTo(value: number) {
     this._x *= value;
     this._y *= value;
   }

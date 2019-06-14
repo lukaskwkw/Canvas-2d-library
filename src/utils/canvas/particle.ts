@@ -56,58 +56,27 @@ class Particle {
   constructor(
     particlePosition: Point,
     particleFeatures: ParticleFeatures,
-    renderer?: Function
-  );
-  constructor(
-    planeDimensions: PlaneDimensions,
-    particlePosition: Point,
-    particleFeatures: ParticleFeatures,
-    renderer?: Function
-  );
-  constructor(
-    positionOrDimensions?: Point | PlaneDimensions,
-    particlePositionOrFeatures?: ParticleFeatures | Point,
-    particleFeaturesOrRenderer?: ParticleFeatures | Function,
-    renderer?: Function
+    renderer?: Function,
+    planeDimensions?: PlaneDimensions
   ) {
     const plane = new PlaneSingleton();
 
-    const { x, y } =
-      ("x" in positionOrDimensions && positionOrDimensions) ||
-      ("x" in particlePositionOrFeatures && particlePositionOrFeatures);
+    this.planeDimensions = planeDimensions || plane.features.dimensions;
+    const { x, y } = particlePosition;
 
-    const { width, height } =
-      ("width" in positionOrDimensions && positionOrDimensions) ||
-      plane.features.dimensions;
+    this.features = { ...FeaturesDefault, ...particleFeatures };
 
-    const features =
-      ("size" in particlePositionOrFeatures && particlePositionOrFeatures) ||
-      ("size" in particleFeaturesOrRenderer && particleFeaturesOrRenderer);
-
-    this.features = {
-      ...this.features,
-      ...features
-    };
-
-    const { renderer: circleRenderer } =
-      (typeof particleFeaturesOrRenderer === "function" && {
-        renderer: particleFeaturesOrRenderer
-      }) ||
-      ((renderer && { renderer }) || { renderer: undefined });
-
-    this.renderer = circleRenderer;
-
-    if (!circleRenderer) {
-      if (!plane.context) {
-        throw new Error(
-          "No context can be obtained from Singleton, nor renderer is provided for Particle!"
-        );
-      }
-
+    if (renderer) {
+      this.renderer = renderer;
+    } else if (!renderer && plane.context) {
       this.renderer = Circle(plane.context)(
         { x, y },
         this.features.size
       ).renderer;
+    } else {
+      throw new Error(
+        "No context can be obtained from Singleton, nor renderer is provided for Particle!"
+      );
     }
 
     this.features.boundary =
@@ -119,9 +88,6 @@ class Particle {
       typeof this.features.planeGravity !== "undefined"
         ? this.features.planeGravity
         : plane.features.plainGravity;
-
-    this.planeDimensions.width = width;
-    this.planeDimensions.height = height;
 
     this.position = new Vector(x, y);
     this.velocity = new Vector(0, 0);
