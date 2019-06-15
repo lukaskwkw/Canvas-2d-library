@@ -2,7 +2,8 @@
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import Vector from "../../utils/vector";
 import { Circle } from "../../utils/canvas/rendeners";
-import { randomX, randomY, connectDotsAndStroke } from "../../utils/math";
+import { randomX, randomY } from "../../utils/math";
+import { connectDotsAndStroke } from "../../utils/draw";
 
 export const setup = () => (height, width) => (context, checkUnmount) => {
   const originPosition = {

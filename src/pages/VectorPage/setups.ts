@@ -1,6 +1,6 @@
-import Particle from "../../utils/canvas/particle";
-import { emmitter } from "../../utils/math";
 import { PlaneSingleton } from "../../utils/canvas/plane";
+import { PlainGravityParticle } from "../../utils/canvas/GravityParticle";
+import { emmitter } from "../../utils/boundary";
 
 export const fountain = () => (height, width) => (context, checkUnmount) => {
   const originPosition = {
@@ -33,7 +33,7 @@ export const fountain = () => (height, width) => (context, checkUnmount) => {
     const weight = circleSize * 5;
 
     particles.push(
-      new Particle(originPosition, {
+      new PlainGravityParticle(originPosition, {
         size: circleSize,
         speed: particleSpeedFormula(),
         direction: -Math.PI / 3,
@@ -49,7 +49,7 @@ export const fountain = () => (height, width) => (context, checkUnmount) => {
 
     context.clearRect(0, 0, width, height);
 
-    particles.forEach((particle: Particle) => {
+    particles.forEach((particle: PlainGravityParticle) => {
       particle.render();
       emmitter(
         originPosition,

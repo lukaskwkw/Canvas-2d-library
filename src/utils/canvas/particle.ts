@@ -1,6 +1,6 @@
 // import { clearArc, CircleCleanFix } from "./trygonometry";
 import Vector from "../vector";
-import { bouncingBoundires, BoundriesSelector } from "../math";
+import { BoundriesSelector } from "../boundary";
 import { Point } from "../vector";
 import {
   PlaneDimensions,
@@ -25,7 +25,7 @@ const SimpleFeatures = {
   size: 5
 };
 
-const Features = {
+export const DefaultFeatures = {
   ...SimpleFeatures,
   speed: 10,
   direction: -Math.PI / 4,
@@ -35,13 +35,6 @@ const Features = {
   angle: 0,
   boundary: undefined
 };
-
-const gravityOrbiteEquation = (m1, m2, distance) =>
-  (m1 * m2 * 0.08) / distance ** 2;
-
-interface OrbitePoint extends Point {
-  weight: number;
-}
 
 export interface SimpleFeatures {
   size: number;
@@ -71,6 +64,7 @@ class Particle implements Simple {
     this.planeDimensions = planeDimensions || plane.features.dimensions;
     const { x, y } = particlePosition;
 
+    this.position = new Vector(x, y);
     this.features = { ...SimpleFeatures, ...particleFeatures };
 
     if (renderer) {

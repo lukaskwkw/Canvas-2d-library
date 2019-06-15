@@ -7,7 +7,8 @@ import { PlaneDimensions } from "./plane";
 import Particle from "./particle";
 
 const UPDATERS = {
-  PLAIN_GRAVITY: "plain gravity"
+  PLAIN_GRAVITY: "plain gravity",
+  ORBITING: "orbiting"
 };
 
 const groundWeight = 600000;
@@ -20,15 +21,15 @@ const planeGravityEquation = (
   (particleWeight * groundWeight) /
   (planeHeight - particleYPosition + groundRadius) ** 2;
 
-interface GravityFeatures extends VelocityFeatures {
+const DefaultGravityFeatures = { orbites: [], weight: 0, size: 5 };
+
+export interface PlainGravityFeatures extends VelocityFeatures {
   weight?: number;
-  orbites?: Array<Particle>;
 }
 
-interface Gravity {
+interface PlainGravity {
   gravity: Vector;
-  features: GravityFeatures;
-  setGravityTowards(particle: Particle): void;
+  features: PlainGravityFeatures;
   togglePlainGravitation(): void;
 }
 
@@ -39,13 +40,20 @@ const setPlainGravity = (
   planeHeight: number
 ) => gravity.setY(planeGravityEquation(weight, yPosition, planeHeight));
 
-class GravityParticle extends VelocityParticle implements Gravity {
-  gravity: Vector;
-  features: GravityFeatures;
+const plainGravityUpdater = (particleToUpdate: PlainGravityParticle) => {
+  setPlainGravity(
+    particleToUpdate.gravity,
+    particleToUpdate.features.weight,
+    particleToUpdate.position.getY(),
+    particleToUpdate.planeDimensions.height
+  );
+  particleToUpdate.accelerate(particleToUpdate.gravity);
+};
 
-  setGravityTowards(particle: Particle) {
-    this.features.orbites.push(particle);
-  }
+export class PlainGravityParticle extends VelocityParticle
+  implements PlainGravity {
+  gravity: Vector = new Vector(0, 0);
+  features: PlainGravityFeatures;
 
   togglePlainGravitation() {
     const foundIndex = this.update.findIndex(
@@ -59,46 +67,93 @@ class GravityParticle extends VelocityParticle implements Gravity {
 
     this.update.push({
       name: UPDATERS.PLAIN_GRAVITY,
-      updater: () => {
-        setPlainGravity(
-          this.gravity,
-          this.features.weight,
-          this.position.getY(),
-          this.planeDimensions.height
-        );
-        this.accelerate(this.gravity);
-      }
+      updater: () => plainGravityUpdater(this)
     });
   }
 
   constructor(
     particlePosition: Point,
-    particleFeatures: GravityFeatures,
+    particleFeatures: PlainGravityFeatures,
     renderer?: Function,
     planeDimensions?: PlaneDimensions
   ) {
     super(particlePosition, particleFeatures, renderer, planeDimensions);
 
-    const { orbites } = this.features;
+    this.features = { ...DefaultGravityFeatures, ...particleFeatures };
 
-    if (orbites && orbites.length > 0) {
-      return;
-    }
-
-    this.gravity = new Vector(0, 0);
     this.update.push({
       name: UPDATERS.PLAIN_GRAVITY,
-      updater: () => {
-        setPlainGravity(
-          this.gravity,
-          this.features.weight,
-          this.position.getY(),
-          planeDimensions.height
-        );
-        this.accelerate(this.gravity);
-      }
+      updater: () => plainGravityUpdater(this)
     });
   }
 }
 
-export default GravityParticle;
+interface AdvancedGravity {
+  setGravityTowards(particle: Particle): void;
+  orbites: AdvancedGravityParticle[];
+}
+
+const gravityOrbiteEquation = (m1, m2, distance) =>
+  (m1 * m2 * 0.08) / distance ** 2;
+
+const orbiteUpdater = (particleToUpdate: AdvancedGravityParticle) => {
+  particleToUpdate.orbites.forEach((particle: AdvancedGravityParticle) => {
+    const distanceY =
+      particle.position.getY() - particleToUpdate.position.getY();
+    const distanceX =
+      particle.position.getX() - particleToUpdate.position.getX();
+    const distance = Math.sqrt(distanceY ** 2 + distanceX ** 2);
+
+    const gravityVector = new Vector(distanceX, distanceY);
+    gravityVector.setAngle(Math.atan2(distanceY, distanceX));
+    gravityVector.setLength(
+      gravityOrbiteEquation(
+        particle.features.weight,
+        particleToUpdate.features.weight,
+        distance
+      )
+    );
+    particleToUpdate.accelerate(gravityVector);
+  });
+};
+
+export class AdvancedGravityParticle extends VelocityParticle
+  implements AdvancedGravity {
+  features: PlainGravityFeatures;
+  orbites: AdvancedGravityParticle[] = [];
+
+  constructor(
+    particlePosition: Point,
+    particleFeatures: PlainGravityFeatures,
+    renderer?: Function,
+    planeDimensions?: PlaneDimensions
+  ) {
+    super(particlePosition, particleFeatures, renderer, planeDimensions);
+
+    this.features = { ...DefaultGravityFeatures, ...particleFeatures };
+    const { orbites } = this;
+
+    if (orbites && orbites.length > 0) {
+      this.update.push({
+        name: UPDATERS.ORBITING,
+        updater: () => orbiteUpdater(this)
+      });
+    }
+  }
+
+  setGravityTowards(particle: AdvancedGravityParticle) {
+    this.orbites.push(particle);
+
+    const foundIndex = this.update.findIndex(
+      ({ name }: UpdateObject) => name === UPDATERS.ORBITING
+    );
+
+    if (foundIndex === -1) {
+      this.update.push({
+        name: UPDATERS.ORBITING,
+        updater: () => orbiteUpdater(this)
+      });
+      return;
+    }
+  }
+}

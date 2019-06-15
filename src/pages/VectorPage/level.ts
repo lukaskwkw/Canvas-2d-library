@@ -1,24 +1,19 @@
-import Particle from "../../utils/canvas/particle";
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import { circlePulse } from "../../utils/canvas/rendeners";
 import Player from "../../utils/canvas/player";
-import {
-  randomPoint,
-  drawMultiMiddleQudricBeziers,
-  moveAlongMultiQuadricBaziers
-} from "../../utils/math";
+import { randomPoint } from "../../utils/math";
+
+import { AdvancedGravityParticle } from "../../utils/canvas/GravityParticle";
+import { moveAlongMultiQuadricBaziers } from "../../utils/interpolation";
+import { drawMultiMiddleQudricBeziers } from "../../utils/draw";
 
 export const level = () => (height, width) => (
   context: CanvasRenderingContext2D,
   checkUnmount
 ) => {
-  new PlaneSingleton(
-    { dimensions: { width, height }, boundaries: { checkBottom: true } },
-    context,
-    true
-  );
+  new PlaneSingleton({ dimensions: { width, height } }, context, true);
 
-  const Sun = new Particle(
+  const Sun = new AdvancedGravityParticle(
     { x: width / 2, y: height / 2 },
     {
       size: 15,
@@ -29,9 +24,9 @@ export const level = () => (height, width) => (
     circlePulse(30)
   );
 
-  const Satelite = new Particle(
+  const Satelite = new AdvancedGravityParticle(
     { x: width / 1.35, y: height / 2 },
-    { size: 5, weight: 50, direction: -Math.PI / 2, speed: 5 }
+    { size: 5, weight: 500, direction: -Math.PI / 2, speed: 5 }
   );
 
   const Ship = new Player(
@@ -39,10 +34,10 @@ export const level = () => (height, width) => (
     { size: 20, weight: 100, direction: -Math.PI / 2, speed: 1 }
   );
 
-  Satelite.setOrbiteTowards(Sun);
-  // Satelite.setOrbiteTowards(Ship);
-  Ship.setOrbiteTowards(Sun);
-  Ship.setOrbiteTowards(Satelite);
+  Satelite.setGravityTowards(Sun);
+  Satelite.setGravityTowards(Ship);
+  Ship.setGravityTowards(Sun);
+  Ship.setGravityTowards(Satelite);
 
   const numberOfPointsForIteration = 50;
 

@@ -1,8 +1,12 @@
-import Particle, { ParticleFeatures } from "./particle";
 import Vector, { Point } from "../vector";
 import { PlaneSingleton } from "./plane";
 import { SpaceShip } from "./rendeners";
-import { moveToOtherSide } from "../math";
+import { moveToOtherSide } from "../boundary";
+import {
+  AdvancedGravityParticle,
+  PlainGravityFeatures
+} from "./GravityParticle";
+import { UpdateObject } from "./VelocityParticle";
 
 const rotateSpeedRatio = () => 0.02 + Math.random() * 0.015;
 const rotateBalancer = () => 0.99;
@@ -12,7 +16,7 @@ const maxRotateValue = 0.2;
 
 const RotateFix = Math.PI / 2;
 
-class Player extends Particle {
+class Player extends AdvancedGravityParticle {
   context: CanvasRenderingContext2D;
   angle: number = 0;
   ignite: boolean;
@@ -46,7 +50,7 @@ class Player extends Particle {
     }
   }
 
-  constructor(position: Point, features: ParticleFeatures) {
+  constructor(position: Point, features: PlainGravityFeatures) {
     super(position, features);
     const { context } = new PlaneSingleton();
     this.context = context;
@@ -69,7 +73,10 @@ class Player extends Particle {
   }
 
   render() {
-    this.update();
+    this.update.forEach(({ updater }: UpdateObject) => {
+      updater();
+    });
+
     const { x, y } = this.position.getCords();
     const { size, fillColor } = this.features;
     this.rotateValue *= rotateBalancer();

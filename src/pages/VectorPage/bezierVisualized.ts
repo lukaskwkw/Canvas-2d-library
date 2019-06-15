@@ -1,6 +1,8 @@
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import { Circle } from "../../utils/canvas/rendeners";
-import { randomPoint, lineInterpolation, connectDots } from "../../utils/math";
+import { randomPoint } from "../../utils/math";
+import { connectDots } from "../../utils/draw";
+import { lineInterpolation } from "../../utils/interpolation";
 
 export const bezier = () => (height, width) => (context, checkUnmount) => {
   new PlaneSingleton(

@@ -1,11 +1,9 @@
-import Particle from "../../utils/canvas/particle";
-import {
-  emmitter,
-  randomPoint,
-  moveAlongMultiQuadricBaziers
-} from "../../utils/math";
+import { moveAlongMultiQuadricBaziers } from "../../utils/interpolation";
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import { circlePulse } from "../../utils/canvas/rendeners";
+import { AdvancedGravityParticle } from "../../utils/canvas/GravityParticle";
+import { randomPoint } from "../../utils/math";
+import { emmitter } from "../../utils/boundary";
 
 export const orbitingFountain = () => (height, width) => (
   context,
@@ -18,63 +16,58 @@ export const orbitingFountain = () => (height, width) => (
 
   new PlaneSingleton(
     {
-      dimensions: { width, height },
-      plainGravity: false
+      dimensions: { width, height }
     },
     context,
     true
   );
 
-  const Sun = new Particle(
+  const Sun = new AdvancedGravityParticle(
     { x: width / 1.2, y: height / 4 },
     {
       size: 75,
       weight: 1455410,
       fillColor: "rgba(200,10,10, 0.5)",
-      speed: 0,
-      planeGravity: false
+      speed: 0
     },
     circlePulse(100)
   );
 
-  const Sun2 = new Particle(
+  const Sun2 = new AdvancedGravityParticle(
     { x: width / 6, y: height / 2 },
     {
       size: 55,
       weight: -314100,
       fillColor: "rgba(100,100,10, 0.5)",
-      speed: 0,
-      planeGravity: false
+      speed: 0
     },
     circlePulse(75)
   );
 
-  const Sun3 = new Particle(
+  const Sun3 = new AdvancedGravityParticle(
     { x: width / 2, y: height / 1.1 },
     {
       size: 35,
       weight: 455520,
       fillColor: "rgba(0,100,100, 0.2)",
-      speed: 0,
-      planeGravity: false
+      speed: 0
     },
     circlePulse(45)
   );
 
-  const Sun4 = new Particle(
+  const Sun4 = new AdvancedGravityParticle(
     { x: width / 2, y: height / 8 },
     {
       size: 22,
       weight: -255520,
       fillColor: "rgba(10,255,100, 0.92)",
-      speed: 0,
-      planeGravity: false
+      speed: 0
     },
     circlePulse(30)
   );
 
   let particles = [];
-  const numbersOfParticles = 2500;
+  const numbersOfParticles = 2100;
   const particleSpeedFormula = () => 2 + Math.random() * 5;
   const particleDirectionFormula = () =>
     Math.PI / 2 + (Math.PI / 2) * (Math.random() - 0.5);
@@ -82,17 +75,17 @@ export const orbitingFountain = () => (height, width) => (
   for (let i = 1; i < numbersOfParticles; i++) {
     const circleSize = 1 + Math.random() * 3;
     const weight = circleSize;
-    const particle = new Particle(originPosition, {
+    const particle = new AdvancedGravityParticle(originPosition, {
       size: circleSize,
       speed: particleSpeedFormula(),
       direction: -Math.PI / 3,
       weight
     });
 
-    particle.setOrbiteTowards(Sun);
-    particle.setOrbiteTowards(Sun2);
-    particle.setOrbiteTowards(Sun3);
-    particle.setOrbiteTowards(Sun4);
+    particle.setGravityTowards(Sun);
+    particle.setGravityTowards(Sun2);
+    particle.setGravityTowards(Sun3);
+    particle.setGravityTowards(Sun4);
     particles.push(particle);
   }
 
@@ -154,7 +147,7 @@ export const orbitingFountain = () => (height, width) => (
     Sun2.position.setCords(hugeGreenPosition);
     Sun4.render();
 
-    particles.forEach((particle: Particle) => {
+    particles.forEach((particle: AdvancedGravityParticle) => {
       particle.render();
       emmitter(
         originPosition,
