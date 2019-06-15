@@ -1,9 +1,8 @@
 // import Particle from "../../utils/canvas/particle";
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import Vector from "../../utils/vector";
-import { Circle } from "../../utils/canvas/rendeners";
-import { randomX, randomY } from "../../utils/math";
-import { connectDotsAndStroke } from "../../utils/draw";
+import { randomX, randomY, randomPoint } from "../../utils/math";
+import SpringWithGravity from "../../utils/canvas/spring";
 
 export const setup = () => (height, width) => (context, checkUnmount) => {
   const originPosition = {
@@ -20,14 +19,26 @@ export const setup = () => (height, width) => (context, checkUnmount) => {
   );
 
   const screenMargins = 20;
-  const weight = new Vector(randomX(screenMargins), randomY(screenMargins));
   const AttachPoint = new Vector(originPosition.x, originPosition.y);
-  const velocity = new Vector(0, 0);
-  const k = 0.1;
-
-  const friction = 0.95;
-  const weightSize = 15;
-  const SpringCircle = Circle()(weight.getCords(), weightSize, "green");
+  const AttachPoint2 = new Vector(
+    randomX(screenMargins),
+    randomY(screenMargins)
+  );
+  const AttachPoint3 = new Vector(
+    randomX(screenMargins),
+    randomY(screenMargins)
+  );
+  const AttachPoint4 = new Vector(
+    randomX(screenMargins),
+    randomY(screenMargins)
+  );
+  const weight = new SpringWithGravity(randomPoint(screenMargins), {
+    size: 15,
+    k: 0.2,
+    weight: 1000,
+    friction: 0.95,
+    pointsOfAttachments: [AttachPoint, AttachPoint2, AttachPoint3, AttachPoint4]
+  });
 
   const render = () => {
     if (checkUnmount()) {
@@ -35,15 +46,7 @@ export const setup = () => (height, width) => (context, checkUnmount) => {
     }
     context.clearRect(0, 0, width, height);
 
-    const distance = AttachPoint.substractVector(weight);
-
-    const SpringAcceleration = distance.multiply(k);
-    velocity.addTo(SpringAcceleration);
-    velocity.multiplyTo(friction);
-
-    weight.addTo(velocity);
-    connectDotsAndStroke([weight.getCords(), AttachPoint.getCords()]);
-    SpringCircle.renderer(weight.getCords());
+    weight.render();
 
     requestAnimationFrame(render);
   };

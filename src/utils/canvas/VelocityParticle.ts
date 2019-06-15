@@ -2,6 +2,7 @@ import Particle, { SimpleFeatures } from "./particle";
 import Vector, { Point } from "../vector";
 import { PlaneDimensions, PlaneSingleton } from "./plane";
 import { bouncingBoundires, BoundriesSelector } from "../boundary";
+import { some } from "../../utils/object";
 
 const UPDATERS = {
   FRICTION: "friction",
@@ -72,7 +73,7 @@ class VelocityParticle extends Particle implements Velocity {
     const boundary =
       this.features.boundary || new PlaneSingleton().features.boundaries;
 
-    if (boundary) {
+    if (boundary && some(boundary)(key => boundary[key] === true)) {
       this.addBoundaryFunction(bouncingBoundires, [
         this.velocity,
         this.position,

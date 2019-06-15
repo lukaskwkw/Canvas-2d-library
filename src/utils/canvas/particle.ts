@@ -52,16 +52,19 @@ class Particle implements Simple {
   renderer: Function;
   position: Vector;
   features: ParticleFeatures;
+  context?: CanvasRenderingContext2D;
 
   constructor(
     particlePosition: Point,
     particleFeatures: ParticleFeatures,
     renderer?: Function,
-    planeDimensions?: PlaneDimensions
+    planeDimensions?: PlaneDimensions,
+    context?: CanvasRenderingContext2D
   ) {
     const plane = new PlaneSingleton();
 
     this.planeDimensions = planeDimensions || plane.features.dimensions;
+    this.context = context || plane.context;
     const { x, y } = particlePosition;
 
     this.position = new Vector(x, y);
@@ -69,8 +72,8 @@ class Particle implements Simple {
 
     if (renderer) {
       this.renderer = renderer;
-    } else if (!renderer && plane.context) {
-      this.renderer = Circle(plane.context)(
+    } else if (!renderer && this.context) {
+      this.renderer = Circle(this.context)(
         { x, y },
         this.features.size
       ).renderer;
