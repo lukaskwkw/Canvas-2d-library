@@ -93,22 +93,39 @@ interface AdvancedGravity {
   orbites: AdvancedGravityParticle[];
 }
 
+const GravityConst = 0.008;
+
 const gravityOrbiteEquation = (m1, m2, distance) =>
-  (m1 * m2 * 0.08) / distance ** 2;
+  (m1 * m2 * GravityConst) / distance ** 2;
+
+const checkHit = (
+  particleToUpdate: AdvancedGravityParticle,
+  graviter: AdvancedGravityParticle,
+  distance: number
+) => {
+  if (distance <= graviter.features.size) {
+    //Set particle out of plane => emit it again / remove it
+    particleToUpdate.position.setCords({
+      x: -10000,
+      y: -10000
+    });
+  }
+};
 
 const orbiteUpdater = (particleToUpdate: AdvancedGravityParticle) => {
-  particleToUpdate.orbites.forEach((particle: AdvancedGravityParticle) => {
+  particleToUpdate.orbites.forEach((graviter: AdvancedGravityParticle) => {
     const distanceY =
-      particle.position.getY() - particleToUpdate.position.getY();
+      graviter.position.getY() - particleToUpdate.position.getY();
     const distanceX =
-      particle.position.getX() - particleToUpdate.position.getX();
+      graviter.position.getX() - particleToUpdate.position.getX();
     const distance = Math.sqrt(distanceY ** 2 + distanceX ** 2);
 
+    checkHit(particleToUpdate, graviter, distance);
     const gravityVector = new Vector(distanceX, distanceY);
     gravityVector.setAngle(Math.atan2(distanceY, distanceX));
     gravityVector.setLength(
       gravityOrbiteEquation(
-        particle.features.weight,
+        graviter.features.weight,
         particleToUpdate.features.weight,
         distance
       )

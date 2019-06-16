@@ -10,8 +10,8 @@ export const orbitingFountain = () => (height, width) => (
   checkUnmount
 ) => {
   const originPosition = {
-    x: width * 0.1,
-    y: 0
+    x: width * 0.9,
+    y: 50
   };
 
   new PlaneSingleton(
@@ -23,7 +23,8 @@ export const orbitingFountain = () => (height, width) => (
   );
 
   const Sun = new AdvancedGravityParticle(
-    { x: width / 1.2, y: height / 4 },
+    randomPoint(10),
+    // { x: width / 1.2, y: height / 4 },
     {
       size: 75,
       weight: 1455410,
@@ -34,7 +35,8 @@ export const orbitingFountain = () => (height, width) => (
   );
 
   const Sun2 = new AdvancedGravityParticle(
-    { x: width / 6, y: height / 2 },
+    randomPoint(10),
+    // { x: width / 6, y: height / 2 },
     {
       size: 55,
       weight: -314100,
@@ -45,7 +47,8 @@ export const orbitingFountain = () => (height, width) => (
   );
 
   const Sun3 = new AdvancedGravityParticle(
-    { x: width / 2, y: height / 1.1 },
+    randomPoint(10),
+    // { x: width / 2, y: height / 1.1 },
     {
       size: 35,
       weight: 455520,
@@ -56,7 +59,8 @@ export const orbitingFountain = () => (height, width) => (
   );
 
   const Sun4 = new AdvancedGravityParticle(
-    { x: width / 2, y: height / 8 },
+    randomPoint(10),
+    // { x: width / 2, y: height / 8 },
     {
       size: 22,
       weight: -255520,
@@ -68,12 +72,12 @@ export const orbitingFountain = () => (height, width) => (
 
   let particles = [];
   const numbersOfParticles = 2100;
-  const particleSpeedFormula = () => 2 + Math.random() * 5;
+  const particleSpeedFormula = () => 0.7 + Math.random() * 2;
   const particleDirectionFormula = () =>
     Math.PI / 2 + (Math.PI / 2) * (Math.random() - 0.5);
 
   for (let i = 1; i < numbersOfParticles; i++) {
-    const circleSize = 1 + Math.random() * 3;
+    const circleSize = 1.2 + Math.random() * 3.5;
     const weight = circleSize;
     const particle = new AdvancedGravityParticle(originPosition, {
       size: circleSize,
@@ -108,7 +112,7 @@ export const orbitingFountain = () => (height, width) => (
   );
 
   //less = faster
-  const interpolationIntervals = 450;
+  const interpolationIntervals = 1500;
   const mulitQuadricMovePoint = moveAlongMultiQuadricBaziers(
     interpolationIntervals,
     testArray
