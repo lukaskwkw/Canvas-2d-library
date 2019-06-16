@@ -18,6 +18,10 @@ export const checkBoundaries = ({ x, y }, width, height, offset = 0) =>
   leftBoundryCheck(x, offset) ||
   rightBoundryCheck(x, width, offset);
 
+export const BOUNDARY_UPDATERS = {
+  BOUNDARY: "boundary"
+};
+
 export interface BoundriesSelector {
   checkTop?: boolean;
   checkBottom?: boolean;

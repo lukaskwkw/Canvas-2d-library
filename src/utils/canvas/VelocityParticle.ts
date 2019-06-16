@@ -1,12 +1,15 @@
 import Particle, { SimpleFeatures } from "./particle";
 import Vector, { Point } from "../vector";
 import { PlaneDimensions, PlaneSingleton } from "./plane";
-import { bouncingBoundires, BoundriesSelector } from "../boundary";
+import {
+  bouncingBoundires,
+  BoundriesSelector,
+  BOUNDARY_UPDATERS
+} from "../boundary";
 import { some } from "../../utils/object";
 
 const UPDATERS = {
   FRICTION: "friction",
-  BOUNDARY: "boundary",
   VELOCITY: "velocity"
 };
 
@@ -97,8 +100,13 @@ class VelocityParticle extends Particle implements Velocity {
   }
 
   addBoundaryFunction(func: Function, args: any[]) {
+    for (let i = 0; i < this.update.length; i++) {
+      if (this.update[i].name === BOUNDARY_UPDATERS.BOUNDARY) {
+        this.update.splice(i, 1);
+      }
+    }
     this.update.push({
-      name: UPDATERS.BOUNDARY,
+      name: BOUNDARY_UPDATERS.BOUNDARY,
       updater: () => func.apply(this, args)
     });
   }

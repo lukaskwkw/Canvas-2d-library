@@ -1,6 +1,6 @@
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import { circlePulse } from "../../utils/canvas/rendeners";
-import Player from "../../utils/canvas/player";
+import PlayerMultiGravity from "../../utils/canvas/player";
 import { randomPoint } from "../../utils/math";
 
 import { AdvancedGravityParticle } from "../../utils/canvas/GravityParticle";
@@ -29,7 +29,7 @@ export const level = () => (height, width) => (
     { size: 5, weight: 500, direction: -Math.PI / 2, speed: 5 }
   );
 
-  const Ship = new Player(
+  const Ship = new PlayerMultiGravity(
     { x: width / 1.1, y: height / 2 },
     { size: 20, weight: 100, direction: -Math.PI / 2, speed: 1 }
   );

@@ -8,10 +8,11 @@ const UPDATERS = {
   SPRING_POINTS_OF_ATTACHEMENTS: "springAttachements"
 };
 
-interface SpringFeatures extends PlainGravityFeatures {
+export interface SpringFeatures extends PlainGravityFeatures {
   k: number;
   pointsOfAttachments: Vector[];
   drawAttachementsLines?: boolean;
+  offset?: number;
 }
 
 interface Spring {
@@ -22,6 +23,10 @@ interface Spring {
 const springUpdater = (spring: SpringWithGravity) => () => {
   spring.features.pointsOfAttachments.forEach((point: Vector) => {
     const distance = point.substractVector(spring.position);
+
+    const distanceLenght = distance.getLength();
+
+    distance.setLength(distanceLenght - spring.features.offset);
 
     const SpringAcceleration = distance.multiply(spring.features.k);
     spring.accelerate(SpringAcceleration);
@@ -49,6 +54,7 @@ class SpringWithGravity extends PlainGravityParticle implements Spring {
     this.features = {
       drawAttachementsLines: true,
       pointsOfAttachments: [],
+      offset: 0,
       ...this.features,
       ...features
     };

@@ -16,9 +16,11 @@ export const connectDots = (
 
 export const connectDotsAndStroke = (
   points: Point[],
+  strokeColor: string = "#000",
   context: CanvasRenderingContext2D = new PlaneSingleton().context
 ) => {
   context.beginPath();
+  context.strokeStyle = strokeColor;
   connectDots(points);
   context.stroke();
 };
