@@ -4,8 +4,14 @@ import Vector from "../../utils/vector";
 import { randomX, randomY, randomPoint } from "../../utils/math";
 import SpringWithGravity from "../../utils/canvas/spring";
 import { PlayerSpring } from "../../utils/canvas/player";
+import { connectDotsAndStroke } from "../../utils/draw";
 
-export const setup = () => (height, width) => (context, checkUnmount) => {
+export const setup = () => (height, width) => (
+  canvas: HTMLCanvasElement,
+  checkUnmount
+) => {
+  const context = canvas.getContext("2d");
+
   const originPosition = {
     x: width * 0.5,
     y: height * 0.5
@@ -26,59 +32,73 @@ export const setup = () => (height, width) => (context, checkUnmount) => {
     randomX(screenMargins),
     randomY(screenMargins)
   );
-  // const AttachPoint3 = new Vector(
-  //   randomX(screenMargins),
-  //   randomY(screenMargins)
-  // );
-  // const AttachPoint4 = new Vector(
-  //   randomX(screenMargins),
-  //   randomY(screenMargins)
-  // );
+  const AttachPoint3 = new Vector(
+    randomX(screenMargins),
+    randomY(screenMargins)
+  );
+  const AttachPoint4 = new Vector(
+    randomX(screenMargins),
+    randomY(screenMargins)
+  );
+
+  const commonK = 0.05;
   const weight = new SpringWithGravity(randomPoint(screenMargins), {
-    size: 15,
-    k: 0.2,
-    weight: 100,
+    size: 5,
+    k: commonK,
+    weight: 10,
     friction: 0.95,
-    offset: 50,
+    offset: 150,
+    speed: 100
+  });
+
+  const weight2 = new SpringWithGravity(randomPoint(screenMargins), {
+    size: 5,
+    k: commonK,
+    weight: 10,
+    friction: 0.95,
+    offset: 150,
     speed: 100,
-    pointsOfAttachments: [AttachPoint]
+    pointsOfAttachments: [weight.position]
   });
 
   const Ship = new PlayerSpring(randomPoint(screenMargins), {
     size: 20,
-    weight: 2,
-    direction: -Math.PI / 2,
-    speed: 1,
-    offset: 50,
+    k: commonK,
+    weight: 20,
     friction: 0.95,
-    k: 0.2,
-    pointsOfAttachments: [AttachPoint2]
+    offset: 150,
+    speed: 100,
+    pointsOfAttachments: [weight.position, weight2.position]
   });
 
-  // Ship.addBoundaryFunction(moveToOtherSide, [
-  //   Ship.position,
-  //   Ship.features.size,
-  //   { checkTop: true }
-  // ]);
-
-  // Ship.attachTo(weight.position);
+  weight.attachTo(weight2.position);
   weight.attachTo(Ship.position);
+  weight2.attachTo(weight.position);
+  weight2.attachTo(Ship.position);
 
-  window.addEventListener("mousemove", event => {
-    AttachPoint.setX(event.clientX - 10);
-    AttachPoint.setY(event.clientY - 55);
+  canvas.addEventListener("mousemove", (event: MouseEvent) => {
+    console.info({ event, canvas });
+    weight2.position.setX(event.clientX - canvas.offsetLeft);
+    weight2.position.setY(event.clientY - canvas.offsetTop);
+    weight2.update = [];
   });
 
   const render = () => {
     if (checkUnmount()) {
       return;
     }
-    context.clearRect(0, 0, width, height);
 
-    // AttachPoint.setCords(Ship.position.getCords());
+    context.clearRect(0, 0, width, height);
 
     Ship.render();
     weight.render();
+    weight2.render();
+    connectDotsAndStroke([
+      weight.position.getCords(),
+      weight2.position.getCords(),
+      Ship.position.getCords(),
+      weight.position.getCords()
+    ]);
 
     requestAnimationFrame(render);
   };

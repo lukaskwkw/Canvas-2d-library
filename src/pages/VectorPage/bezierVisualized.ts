@@ -4,7 +4,12 @@ import { randomPoint } from "../../utils/math";
 import { connectDots } from "../../utils/draw";
 import { lineInterpolation } from "../../utils/interpolation";
 
-export const bezier = () => (height, width) => (context, checkUnmount) => {
+export const bezier = () => (height, width) => (
+  canvas: HTMLCanvasElement,
+  checkUnmount
+) => {
+  const context = canvas.getContext("2d");
+
   new PlaneSingleton(
     { dimensions: { width, height }, boundaries: { checkBottom: true } },
     context,

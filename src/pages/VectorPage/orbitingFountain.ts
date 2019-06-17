@@ -6,9 +6,11 @@ import { randomPoint } from "../../utils/math";
 import { emmitter } from "../../utils/boundary";
 
 export const orbitingFountain = () => (height, width) => (
-  context,
+  canvas: HTMLCanvasElement,
   checkUnmount
 ) => {
+  const context = canvas.getContext("2d");
+
   const originPosition = {
     x: width * 0.9,
     y: 50

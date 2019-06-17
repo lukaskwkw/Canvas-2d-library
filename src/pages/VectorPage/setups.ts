@@ -2,7 +2,12 @@ import { PlaneSingleton } from "../../utils/canvas/plane";
 import { PlainGravityParticle } from "../../utils/canvas/GravityParticle";
 import { emmitter } from "../../utils/boundary";
 
-export const fountain = () => (height, width) => (context, checkUnmount) => {
+export const fountain = () => (height, width) => (
+  canvas: HTMLCanvasElement,
+  checkUnmount
+) => {
+  const context = canvas.getContext("2d");
+
   const originPosition = {
     x: width * 0.5,
     y: height * 1

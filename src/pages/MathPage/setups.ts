@@ -6,17 +6,17 @@ import {
 } from "../../utils/canvas/trygonometry";
 
 export const sinusRendererOrbit = (x, y) => (height, width) => (
-  context,
+  canvas: HTMLCanvasElement,
   checkUnmount
 ) => {
   setTimeout(
-    () => orbit(150, 105, 15, 0.05, x, y)(height, width)(context, checkUnmount),
+    () => orbit(150, 105, 15, 0.05, x, y)(height, width)(canvas, checkUnmount),
     x * Math.random() * 5
   );
 };
 
 export const sinusRendererLissajousCurves = (x, y) => (height, width) => (
-  context,
+  canvas: HTMLCanvasElement,
   checkUnmount
 ) => {
   setTimeout(
@@ -29,19 +29,19 @@ export const sinusRendererLissajousCurves = (x, y) => (height, width) => (
         0.011 * Math.random(),
         x,
         y
-      )(height, width)(context, checkUnmount),
+      )(height, width)(canvas, checkUnmount),
     x * Math.random() * 15000
   );
 };
 
 export const sinusRendererUpAndDownAndPulse = (x, y) => (height, width) => (
-  context,
+  canvas: HTMLCanvasElement,
   checkUnmount
 ) => {
   setTimeout(
     () =>
       circleUpAndDownAndPulse(x, y, 15, 0, Math.random() * 3)(height, width)(
-        context,
+        canvas,
         checkUnmount
       ),
     x * Math.random() * 5
@@ -49,13 +49,13 @@ export const sinusRendererUpAndDownAndPulse = (x, y) => (height, width) => (
 };
 
 export const sinusRendererUpAndDown = (x, y) => (height, width) => (
-  context,
+  canvas: HTMLCanvasElement,
   checkUnmount
 ) => {
   setTimeout(
     () =>
       circleUpAndDown(15, x, y, null, 0.02)(height, width)(
-        context,
+        canvas,
         checkUnmount
       ),
     x

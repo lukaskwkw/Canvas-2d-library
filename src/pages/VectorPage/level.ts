@@ -8,10 +8,10 @@ import { moveAlongMultiQuadricBaziers } from "../../utils/interpolation";
 import { drawMultiMiddleQudricBeziers } from "../../utils/draw";
 
 export const level = () => (height, width) => (
-  context: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
   checkUnmount
 ) => {
-  new PlaneSingleton({ dimensions: { width, height } }, context, true);
+  const context = canvas.getContext("2d");
 
   const Sun = new AdvancedGravityParticle(
     { x: width / 2, y: height / 2 },

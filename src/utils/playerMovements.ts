@@ -3,8 +3,8 @@ import VelocityParticle, { UpdateObject } from "./canvas/VelocityParticle";
 
 const rotateSpeedRatio = () => 0.002 + Math.random() * 0.0015;
 const rotateBalancer = () => 0.99;
-const defaultIgniteRatio = 0.5;
-const maxIgniteValue = 1000;
+const defaultIgniteRatio = 0.1;
+const maxIgniteValue = 10;
 // const maxRotateValue = 0.02;
 
 const RotateFix = Math.PI / 2;

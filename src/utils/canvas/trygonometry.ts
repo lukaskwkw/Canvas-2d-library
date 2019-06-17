@@ -8,7 +8,9 @@ export const circleUpAndDown = (
   originY = null,
   circleOffset = null,
   speed = 0.02
-) => (height, width) => (context, checkUnmount) => {
+) => (height, width) => (canvas: HTMLCanvasElement, checkUnmount) => {
+  const context = canvas.getContext("2d");
+
   const startX = typeof originX == "number" ? originX : width * 0.5,
     startY = typeof originY == "number" ? originY : height * 0.5,
     offset = circleOffset || height * 0.4;
@@ -53,7 +55,9 @@ export const circleUpAndDownAndPulse = (
   circleOffset = maxRadius / 2,
   upAndDownOffset = null,
   speed = 0.02
-) => (height, width) => (context, checkUnmount) => {
+) => (height, width) => (canvas: HTMLCanvasElement, checkUnmount) => {
+  const context = canvas.getContext("2d");
+
   const startX = typeof originX == "number" ? originX : width * 0.5,
     startY = typeof originY == "number" ? originY : height * 0.5,
     offset = upAndDownOffset || height * 0.4;
@@ -142,7 +146,9 @@ export const orbit = (
   speed = 0.1,
   centreX,
   centreY
-) => (height, width) => (context, checkUnmount) => {
+) => (height, width) => (canvas: HTMLCanvasElement, checkUnmount) => {
+  const context = canvas.getContext("2d");
+
   const x = typeof centreX === "number" ? centreX : width / 2,
     y = typeof centreY === "number" ? centreY : height / 2;
 
@@ -185,7 +191,9 @@ export const lissajousCurves = (
   ySpeed = 0.11,
   centreX,
   centreY
-) => (height, width) => (context, checkUnmount) => {
+) => (height, width) => (canvas: HTMLCanvasElement, checkUnmount) => {
+  const context = canvas.getContext("2d");
+
   const x = typeof centreX === "number" ? centreX : width / 2,
     y = typeof centreY === "number" ? centreY : height / 2;
 

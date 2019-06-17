@@ -19,8 +19,7 @@ export const Canvas = ({
   const checkUnmount = () => unmount;
   useEffect(() => {
     const { current: canvas } = ref;
-    const context = canvas.getContext("2d");
-    renderer(height, width)(context, checkUnmount);
+    renderer(height, width)(canvas, checkUnmount);
     return () => (unmount = true);
   });
 

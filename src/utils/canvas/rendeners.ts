@@ -54,7 +54,9 @@ export const drawRandomLines = (numberOfLines = 100) => (
 export const sinus = (invert = true, frequncy = 0.5, renderer) => (
   height,
   width
-) => (context, checkUnmount) => {
+) => (canvas: HTMLCanvasElement, checkUnmount) => {
+  const context = canvas.getContext("2d");
+
   const startX = width * 0.1,
     startY = height * 0.1,
     offset = 5;
@@ -245,7 +247,7 @@ export const SpaceShip = (
     cxt.closePath();
     if (ignite) {
       cxt.moveTo(0, size / 2);
-      cxt.lineTo(0, ignite * 400);
+      cxt.lineTo(0, size * 1.5);
     }
     // ctx.fillStyle = color;
     // ctx.fill(region, 'evenodd');

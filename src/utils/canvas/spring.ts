@@ -10,7 +10,7 @@ const UPDATERS = {
 
 export interface SpringFeatures extends PlainGravityFeatures {
   k: number;
-  pointsOfAttachments: Vector[];
+  pointsOfAttachments?: Vector[];
   drawAttachementsLines?: boolean;
   offset?: number;
 }
@@ -52,7 +52,7 @@ class SpringWithGravity extends PlainGravityParticle implements Spring {
   ) {
     super(position, features, renderer, planeDimensions);
     this.features = {
-      drawAttachementsLines: true,
+      drawAttachementsLines: false,
       pointsOfAttachments: [],
       offset: 0,
       ...this.features,
