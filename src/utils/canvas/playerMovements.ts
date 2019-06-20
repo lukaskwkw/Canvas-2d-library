@@ -1,5 +1,6 @@
 import Vector from "../vector";
-import VelocityParticle, { UpdateObject } from "./VelocityParticle";
+import VelocityParticle from "./VelocityParticle";
+import { UpdateObject } from "./particle";
 
 const rotateSpeedRatio = () => 0.002 + Math.random() * 0.0015;
 const rotateBalancer = () => 0.99;

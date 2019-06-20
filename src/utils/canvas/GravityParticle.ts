@@ -1,10 +1,7 @@
-import VelocityParticle, {
-  VelocityFeatures,
-  UpdateObject
-} from "./VelocityParticle";
+import VelocityParticle, { VelocityFeatures } from "./VelocityParticle";
 import { Point, Vector } from "../vector";
 import { PlaneDimensions } from "./plane";
-import Particle from "./particle";
+import Particle, { UpdateObject } from "./particle";
 
 const UPDATERS = {
   PLAIN_GRAVITY: "plain gravity",

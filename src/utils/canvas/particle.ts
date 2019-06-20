@@ -34,6 +34,11 @@ export const DefaultFeatures = {
   boundary: undefined
 };
 
+export interface UpdateObject {
+  name: string;
+  updater(): void;
+}
+
 export interface SimpleFeatures {
   size: number;
   fillColor?: string;
@@ -43,6 +48,7 @@ export interface Simple {
   position: Vector;
   features: SimpleFeatures;
   renderer: Function;
+  update: UpdateObject[];
 }
 
 class Particle implements Simple {
@@ -51,6 +57,7 @@ class Particle implements Simple {
   position: Vector;
   features: ParticleFeatures;
   context?: CanvasRenderingContext2D;
+  update: UpdateObject[] = [];
 
   constructor(
     particlePosition: Point,

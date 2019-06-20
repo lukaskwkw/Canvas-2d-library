@@ -1,4 +1,4 @@
-import Particle, { SimpleFeatures } from "./particle";
+import Particle, { SimpleFeatures, UpdateObject } from "./particle";
 import Vector, { Point } from "../vector";
 import { PlaneDimensions, PlaneSingleton } from "./plane";
 import {
@@ -13,15 +13,9 @@ const UPDATERS = {
   VELOCITY: "velocity"
 };
 
-export interface UpdateObject {
-  name: string;
-  updater(): void;
-}
-
 interface Velocity {
   velocity: Vector;
   features: VelocityFeatures;
-  update: UpdateObject[];
   attachFriction(value?: number): any;
   addBoundaryFunction(func: Function, args: any[]): any;
   accelerate(vector: Vector): void;
@@ -46,7 +40,6 @@ const DefaultVelocityFeatures = {
 
 class VelocityParticle extends Particle implements Velocity {
   velocity: Vector = new Vector(0, 0);
-  update: UpdateObject[] = [];
   features: VelocityFeatures;
 
   constructor(

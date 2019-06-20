@@ -4,6 +4,7 @@ import SpringWithGravity from "../../utils/canvas/spring";
 import { PlayerSpring } from "../../utils/canvas/player";
 import { connectDotsAndStroke } from "../../utils/canvas/draw";
 import { randomPoint } from "../../utils/math";
+import { mousePointerCollisionUpdater } from "../../utils/canvas/collision";
 
 export const setup = () => (height, width) => (
   canvas: HTMLCanvasElement,
@@ -42,7 +43,7 @@ export const setup = () => (height, width) => (
 
   const commonK = 0.05;
   const weight = new SpringWithGravity(randomPoint(screenMargins), {
-    size: 5,
+    size: 15,
     k: commonK,
     weight: 10,
     friction: 0.95,
@@ -51,7 +52,7 @@ export const setup = () => (height, width) => (
   });
 
   const weight2 = new SpringWithGravity(randomPoint(screenMargins), {
-    size: 5,
+    size: 15,
     k: commonK,
     weight: 10,
     friction: 0.95,
@@ -75,11 +76,15 @@ export const setup = () => (height, width) => (
   weight2.attachTo(weight.position);
   weight2.attachTo(Ship.position);
 
-  canvas.addEventListener("mousemove", (event: MouseEvent) => {
-    weight2.position.setX(event.clientX - canvas.offsetLeft);
-    weight2.position.setY(event.clientY - canvas.offsetTop);
-    weight2.update = [];
-  });
+  // canvas.addEventListener("mousemove", (event: MouseEvent) => {
+  //   weight2.position.setX(event.clientX - canvas.offsetLeft);
+  //   weight2.position.setY(event.clientY - canvas.offsetTop);
+  //   weight2.update = [];
+  // });
+
+  const allParticles = [weight, weight2, Ship];
+
+  mousePointerCollisionUpdater(allParticles, canvas)();
 
   const render = () => {
     if (checkUnmount()) {
