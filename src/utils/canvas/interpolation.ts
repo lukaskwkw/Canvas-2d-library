@@ -1,4 +1,4 @@
-import { Point } from "./vector";
+import { Point } from "../vector";
 
 export const lineInterpolation = (t: number, p1: Point, p2: Point): Point => {
   return { x: (1 - t) * p1.x + t * p2.x, y: (1 - t) * p1.y + t * p2.y };

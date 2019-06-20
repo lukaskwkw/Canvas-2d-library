@@ -1,5 +1,5 @@
-import { Point } from "./vector";
-import { PlaneSingleton } from "./canvas/plane";
+import { Point } from "../vector";
+import { PlaneSingleton } from "./plane";
 import { cubicBezierIteration } from "./interpolation";
 
 export const connectDots = (

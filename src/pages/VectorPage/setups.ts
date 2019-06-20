@@ -1,6 +1,6 @@
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import { PlainGravityParticle } from "../../utils/canvas/GravityParticle";
-import { emmitter } from "../../utils/boundary";
+import { emmitter } from "../../utils/canvas/boundary";
 
 export const fountain = () => (height, width) => (
   canvas: HTMLCanvasElement,

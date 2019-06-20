@@ -1,10 +1,9 @@
 // import Particle from "../../utils/canvas/particle";
 import { PlaneSingleton } from "../../utils/canvas/plane";
-import Vector from "../../utils/vector";
-import { randomX, randomY, randomPoint } from "../../utils/math";
 import SpringWithGravity from "../../utils/canvas/spring";
 import { PlayerSpring } from "../../utils/canvas/player";
-import { connectDotsAndStroke } from "../../utils/draw";
+import { connectDotsAndStroke } from "../../utils/canvas/draw";
+import { randomPoint } from "../../utils/math";
 
 export const setup = () => (height, width) => (
   canvas: HTMLCanvasElement,
@@ -12,10 +11,10 @@ export const setup = () => (height, width) => (
 ) => {
   const context = canvas.getContext("2d");
 
-  const originPosition = {
-    x: width * 0.5,
-    y: height * 0.5
-  };
+  // const originPosition = {
+  //   x: width * 0.5,
+  //   y: height * 0.5
+  // };
 
   new PlaneSingleton(
     {
@@ -27,19 +26,19 @@ export const setup = () => (height, width) => (
   );
 
   const screenMargins = 20;
-  const AttachPoint = new Vector(originPosition.x, originPosition.y);
-  const AttachPoint2 = new Vector(
-    randomX(screenMargins),
-    randomY(screenMargins)
-  );
-  const AttachPoint3 = new Vector(
-    randomX(screenMargins),
-    randomY(screenMargins)
-  );
-  const AttachPoint4 = new Vector(
-    randomX(screenMargins),
-    randomY(screenMargins)
-  );
+  // const AttachPoint = new Vector(originPosition.x, originPosition.y);
+  // const AttachPoint2 = new Vector(
+  //   randomX(screenMargins),
+  //   randomY(screenMargins)
+  // );
+  // const AttachPoint3 = new Vector(
+  //   randomX(screenMargins),
+  //   randomY(screenMargins)
+  // );
+  // const AttachPoint4 = new Vector(
+  //   randomX(screenMargins),
+  //   randomY(screenMargins)
+  // );
 
   const commonK = 0.05;
   const weight = new SpringWithGravity(randomPoint(screenMargins), {
@@ -77,7 +76,6 @@ export const setup = () => (height, width) => (
   weight2.attachTo(Ship.position);
 
   canvas.addEventListener("mousemove", (event: MouseEvent) => {
-    console.info({ event, canvas });
     weight2.position.setX(event.clientX - canvas.offsetLeft);
     weight2.position.setY(event.clientY - canvas.offsetTop);
     weight2.update = [];

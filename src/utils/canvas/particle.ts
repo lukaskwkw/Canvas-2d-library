@@ -1,7 +1,5 @@
-// import { clearArc, CircleCleanFix } from "./trygonometry";
-import Vector from "../vector";
-import { BoundriesSelector } from "../boundary";
-import { Point } from "../vector";
+import { BoundriesSelector } from "./boundary";
+import Vector, { Point } from "../vector";
 import {
   PlaneDimensions,
   PlaneSingleton,

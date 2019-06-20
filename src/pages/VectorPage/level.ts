@@ -1,11 +1,10 @@
-import { PlaneSingleton } from "../../utils/canvas/plane";
 import { circlePulse } from "../../utils/canvas/rendeners";
 import PlayerMultiGravity from "../../utils/canvas/player";
 import { randomPoint } from "../../utils/math";
 
 import { AdvancedGravityParticle } from "../../utils/canvas/GravityParticle";
-import { moveAlongMultiQuadricBaziers } from "../../utils/interpolation";
-import { drawMultiMiddleQudricBeziers } from "../../utils/draw";
+import { moveAlongMultiQuadricBaziers } from "../../utils/canvas/interpolation";
+import { drawMultiMiddleQudricBeziers } from "../../utils/canvas/draw";
 
 export const level = () => (height, width) => (
   canvas: HTMLCanvasElement,

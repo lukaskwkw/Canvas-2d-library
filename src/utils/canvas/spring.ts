@@ -1,6 +1,6 @@
 import { PlainGravityParticle, PlainGravityFeatures } from "./GravityParticle";
 import Vector, { Point } from "../vector";
-import { connectDots } from "../draw";
+import { connectDots } from "./draw";
 import { PlaneDimensions } from "./plane";
 
 const UPDATERS = {

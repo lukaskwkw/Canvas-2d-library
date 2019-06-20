@@ -1,5 +1,5 @@
 import Controller from "./player";
-import { BoundriesSelector } from "../boundary";
+import { BoundriesSelector } from "./boundary";
 
 export interface PlaneDimensions {
   width: number;

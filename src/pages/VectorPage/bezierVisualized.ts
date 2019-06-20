@@ -1,8 +1,8 @@
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import { Circle } from "../../utils/canvas/rendeners";
 import { randomPoint } from "../../utils/math";
-import { connectDots } from "../../utils/draw";
-import { lineInterpolation } from "../../utils/interpolation";
+import { connectDots } from "../../utils/canvas/draw";
+import { lineInterpolation } from "../../utils/canvas/interpolation";
 
 export const bezier = () => (height, width) => (
   canvas: HTMLCanvasElement,

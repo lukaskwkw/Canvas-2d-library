@@ -1,11 +1,11 @@
-import Particle from "./canvas/particle";
-import Vector, { Point } from "./vector";
+import Particle from "./particle";
+import Vector, { Point } from "../vector";
 import {
   PlaneDefaultBoundaries,
   PlaneDimensions,
   PlaneSingleton
-} from "./canvas/plane";
-import VelocityParticle from "./canvas/VelocityParticle";
+} from "./plane";
+import VelocityParticle from "./VelocityParticle";
 
 export const topBoundryCheck = (y, offset = 0) => y - offset < 0;
 export const bottomBoundryCheck = (y, height, offset = 0) =>

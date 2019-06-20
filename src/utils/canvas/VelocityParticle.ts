@@ -5,7 +5,7 @@ import {
   bouncingBoundires,
   BoundriesSelector,
   BOUNDARY_UPDATERS
-} from "../boundary";
+} from "./boundary";
 import { some } from "../../utils/object";
 
 const UPDATERS = {

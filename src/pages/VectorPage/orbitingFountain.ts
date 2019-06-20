@@ -1,9 +1,9 @@
-import { moveAlongMultiQuadricBaziers } from "../../utils/interpolation";
+import { moveAlongMultiQuadricBaziers } from "../../utils/canvas/interpolation";
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import { circlePulse } from "../../utils/canvas/rendeners";
 import { AdvancedGravityParticle } from "../../utils/canvas/GravityParticle";
 import { randomPoint } from "../../utils/math";
-import { emmitter } from "../../utils/boundary";
+import { emmitter } from "../../utils/canvas/boundary";
 
 export const orbitingFountain = () => (height, width) => (
   canvas: HTMLCanvasElement,

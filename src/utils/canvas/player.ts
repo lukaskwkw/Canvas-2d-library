@@ -5,7 +5,7 @@ import {
   PlainGravityFeatures
 } from "./GravityParticle";
 import SpringWithGravity, { SpringFeatures } from "./spring";
-import { PlayerJetEngineMovements, JetEngine } from "../playerMovements";
+import { PlayerJetEngineMovements, JetEngine } from "./playerMovements";
 
 class PlayerMultiGravity extends AdvancedGravityParticle
   implements PlayerJetEngineMovements {
