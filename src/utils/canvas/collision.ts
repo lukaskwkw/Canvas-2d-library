@@ -84,3 +84,55 @@ export const mousePointerCollisionUpdater = (
     });
   };
 };
+
+export const touchCollisionUpdater = (
+  particles: Particle[],
+  canvas: HTMLCanvasElement
+) => {
+  particles.forEach((particle: Particle) => {
+    particle.features["prevColor"] = particle.features.fillColor;
+    particle["prevUpdate"] = particle.update;
+  });
+
+  let pressed = false;
+
+  let movingParticle: Particle = null;
+
+  canvas.addEventListener("touchstart", () => (pressed = true));
+  canvas.addEventListener("touchend", () => {
+    movingParticle.update = movingParticle["prevUpdate"];
+    movingParticle.features.fillColor = movingParticle.features["prevColor"];
+    movingParticle = null;
+    pressed = false;
+  });
+
+  return () => {
+    canvas.addEventListener("touchmove", (event: TouchEvent) => {
+      if (pressed && movingParticle) {
+        movingParticle.position.setCords({
+          x: event.targetTouches[0].clientX - canvas.offsetLeft,
+          y: event.targetTouches[0].clientY - canvas.offsetTop
+        });
+        return;
+      }
+
+      particles.forEach((particle: Particle) => {
+        if (
+          inCircleBoundary(
+            particle.position,
+            particle.features.size,
+            new Vector(
+              event.targetTouches[0].clientX - canvas.offsetLeft,
+              event.targetTouches[0].clientY - canvas.offsetTop
+            )
+          ) &&
+          !movingParticle
+        ) {
+          particle.features.fillColor = "purple";
+          movingParticle = particle;
+          particle.update = [];
+        }
+      });
+    });
+  };
+};

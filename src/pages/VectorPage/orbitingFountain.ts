@@ -4,7 +4,10 @@ import { circlePulse } from "../../utils/canvas/rendeners";
 import { AdvancedGravityParticle } from "../../utils/canvas/GravityParticle";
 import { randomPoint } from "../../utils/math";
 import { emmitter } from "../../utils/canvas/boundary";
-import { mousePointerCollisionUpdater } from "../../utils/canvas/collision";
+import {
+  mousePointerCollisionUpdater,
+  touchCollisionUpdater
+} from "../../utils/canvas/collision";
 import VelocityParticle from "../../utils/canvas/VelocityParticle";
 // import { drawMultiMiddleQudricBeziers } from "../../utils/canvas/draw";
 
@@ -179,6 +182,7 @@ export const orbitingFountain = () => (height, width) => (
   const sunsArray = [RedBaron, HugeGreen, BlueBilbo, GreenGoblin];
   mousePointerCollisionUpdater(particles, canvas)();
   mousePointerCollisionUpdater(sunsArray, canvas)();
+  touchCollisionUpdater(sunsArray, canvas)();
 
   const render = () => {
     if (checkUnmount() || particles.length < 2) {

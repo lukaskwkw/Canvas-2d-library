@@ -4,7 +4,10 @@ import SpringWithGravity from "../../utils/canvas/spring";
 import { PlayerSpring } from "../../utils/canvas/player";
 import { connectDotsAndStroke } from "../../utils/canvas/draw";
 import { randomPoint } from "../../utils/math";
-import { mousePointerCollisionUpdater } from "../../utils/canvas/collision";
+import {
+  mousePointerCollisionUpdater,
+  touchCollisionUpdater
+} from "../../utils/canvas/collision";
 
 export const setup = () => (height, width) => (
   canvas: HTMLCanvasElement,
@@ -85,6 +88,7 @@ export const setup = () => (height, width) => (
   const allParticles = [weight, weight2, Ship];
 
   mousePointerCollisionUpdater(allParticles, canvas)();
+  touchCollisionUpdater(allParticles, canvas)();
 
   const render = () => {
     if (checkUnmount()) {
