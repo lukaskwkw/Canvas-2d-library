@@ -50,52 +50,54 @@ export const orbitingFountain = () => (height, width) => (
     true
   );
 
+  const downgradeRatio = width < 600 ? 0.2 : 1;
+
   const RedBaron: AdvancedGravityParticle = new AdvancedGravityParticle(
     randomPoint(10),
     // { x: width / 1.2, y: height / 4 },
     {
-      size: 75,
+      size: 75 * downgradeRatio,
       weight: 1455410,
       fillColor: "rgba(200,10,10, 0.5)",
       speed: 0
     },
-    circlePulse(100)
+    circlePulse(100 * downgradeRatio)
   );
 
   const HugeGreen: AdvancedGravityParticle = new AdvancedGravityParticle(
     randomPoint(10),
     // { x: width / 6, y: height / 2 },
     {
-      size: 55,
+      size: 55 * downgradeRatio,
       weight: -314100,
       fillColor: "rgba(100,100,10, 0.5)",
       speed: 0
     },
-    circlePulse(75)
+    circlePulse(75 * downgradeRatio)
   );
 
   const BlueBilbo: AdvancedGravityParticle = new AdvancedGravityParticle(
     randomPoint(10),
     // { x: width / 2, y: height / 1.1 },
     {
-      size: 35,
+      size: 35 * downgradeRatio,
       weight: 455520,
       fillColor: "rgba(0,100,100, 0.2)",
       speed: 0
     },
-    circlePulse(45)
+    circlePulse(45 * downgradeRatio)
   );
 
   const GreenGoblin: AdvancedGravityParticle = new AdvancedGravityParticle(
     randomPoint(10),
     // { x: width / 2, y: height / 8 },
     {
-      size: 22,
+      size: 22 * downgradeRatio,
       weight: -255520,
       fillColor: "rgba(10,255,100, 0.92)",
       speed: 0
     },
-    circlePulse(30)
+    circlePulse(30 * downgradeRatio)
   );
 
   let particles = [];
@@ -108,7 +110,7 @@ export const orbitingFountain = () => (height, width) => (
     const circleSize = 1.2 + Math.random() * 3.5;
     const weight = circleSize;
     const particle = new AdvancedGravityParticle(originPosition, {
-      size: circleSize,
+      size: circleSize * downgradeRatio,
       speed: particleSpeedFormula(),
       direction: -Math.PI / 3,
       weight
@@ -180,9 +182,8 @@ export const orbitingFountain = () => (height, width) => (
   });
 
   const sunsArray = [RedBaron, HugeGreen, BlueBilbo, GreenGoblin];
-  mousePointerCollisionUpdater(particles, canvas)();
-  mousePointerCollisionUpdater(sunsArray, canvas)();
-  touchCollisionUpdater(sunsArray, canvas)();
+  mousePointerCollisionUpdater([...particles, ...sunsArray], canvas)();
+  touchCollisionUpdater([...sunsArray, ...particles], canvas)();
 
   const render = () => {
     if (checkUnmount() || particles.length < 2) {

@@ -44,9 +44,11 @@ export const setup = () => (height, width) => (
   //   randomY(screenMargins)
   // );
 
+  const downgradeRatio = width < 600 ? 0.5 : 1;
+
   const commonK = 0.05;
   const weight = new SpringWithGravity(randomPoint(screenMargins), {
-    size: 15,
+    size: 15 * downgradeRatio,
     k: commonK,
     weight: 10,
     friction: 0.95,
@@ -55,7 +57,7 @@ export const setup = () => (height, width) => (
   });
 
   const weight2 = new SpringWithGravity(randomPoint(screenMargins), {
-    size: 15,
+    size: 15 * downgradeRatio,
     k: commonK,
     weight: 10,
     friction: 0.95,
@@ -65,7 +67,7 @@ export const setup = () => (height, width) => (
   });
 
   const Ship = new PlayerSpring(randomPoint(screenMargins), {
-    size: 20,
+    size: 20 * downgradeRatio,
     k: commonK,
     weight: 20,
     friction: 0.95,
