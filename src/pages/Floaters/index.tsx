@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Canvas, Plane } from "../../components/Canvas";
-import { setup } from "./setup";
+import setup from "./setup";
 
-const VectorTab = () => (
+const Floaters = () => (
   <Plane>
     <Canvas renderer={setup()} />
   </Plane>
 );
 
-export default VectorTab;
+export default Floaters;

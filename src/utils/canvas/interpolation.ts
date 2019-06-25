@@ -47,28 +47,40 @@ export const cubicBezierIteration = (
 
 export const moveAlongMultiQuadricBaziers = (
   intervals: number,
-  points: Point[]
+  originPoints: Point[]
 ) => {
-  const pointsLength = points.length;
+  const pointsLength = originPoints.length;
 
   let t = 1 / intervals;
-  const [firstStartPoint, firstControlPoint, firstEndPoint] = points;
+  let [firstStartPoint, firstControlPoint, firstEndPoint] = originPoints;
 
   //Must be at least 4 points todo: make compatibile with min 3 points
   if (pointsLength < 4) {
     return () => firstStartPoint;
   }
 
-  const firstMiddleEnd = {
+  let firstMiddleEnd = {
     x: (firstControlPoint.x + firstEndPoint.x) / 2,
     y: (firstControlPoint.y + firstEndPoint.y) / 2
   };
 
-  const penultimatePoint = points[pointsLength - 2];
-  const lastPoint = points[pointsLength - 1];
+  let penultimatePoint = originPoints[pointsLength - 2];
+  let lastPoint = originPoints[pointsLength - 1];
   let index = 1;
 
-  return (): Point => {
+  return (points: Point[] = originPoints, recheckEndPoints = false) => {
+    if (recheckEndPoints) {
+      [firstStartPoint, firstControlPoint, firstEndPoint] = points;
+
+      firstMiddleEnd = {
+        x: (firstControlPoint.x + firstEndPoint.x) / 2,
+        y: (firstControlPoint.y + firstEndPoint.y) / 2
+      };
+
+      penultimatePoint = points[pointsLength - 2];
+      lastPoint = points[pointsLength - 1];
+    }
+
     if (t > 1) {
       t = 1 / intervals;
       index++;

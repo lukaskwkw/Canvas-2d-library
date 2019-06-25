@@ -4,12 +4,13 @@ import Portfolio from "./pages/Portfolio";
 // import MathTab from "./pages/MathPage/";
 import VectorTab from "./pages/VectorPage";
 import SpingPage from "./pages/SpringPage";
+import FloatersPage from "./pages/Floaters";
 
 const PAGES = {
   "/": Home,
   "/404": FourOhFour,
   "/portfolio": Portfolio,
-  // "/math": MathTab,
+  "/floaters": FloatersPage,
   "/vector": VectorTab,
   "/spring": SpingPage
 };

@@ -16,6 +16,7 @@ const config = {
       {
         test: /\.s?css$/,
         use: [
+          //todo: check this is it obsolete
           !PRODUCTION_ENV ? "style-loader" : MiniCssExtractPlugin.loader,
           "css-loader",
           "sass-loader"

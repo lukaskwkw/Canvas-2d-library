@@ -14,11 +14,8 @@ export const setup = () => (height, width) => (
   checkUnmount
 ) => {
   const context = canvas.getContext("2d");
-
-  // const originPosition = {
-  //   x: width * 0.5,
-  //   y: height * 0.5
-  // };
+  height = canvas.height = window.innerHeight - canvas.offsetTop;
+  width = canvas.width = window.innerWidth - canvas.offsetLeft;
 
   new PlaneSingleton(
     {
@@ -30,20 +27,6 @@ export const setup = () => (height, width) => (
   );
 
   const screenMargins = 20;
-  // const AttachPoint = new Vector(originPosition.x, originPosition.y);
-  // const AttachPoint2 = new Vector(
-  //   randomX(screenMargins),
-  //   randomY(screenMargins)
-  // );
-  // const AttachPoint3 = new Vector(
-  //   randomX(screenMargins),
-  //   randomY(screenMargins)
-  // );
-  // const AttachPoint4 = new Vector(
-  //   randomX(screenMargins),
-  //   randomY(screenMargins)
-  // );
-
   const downgradeRatio = width < 600 ? 0.5 : 1;
 
   const commonK = 0.05;
@@ -80,12 +63,6 @@ export const setup = () => (height, width) => (
   weight.attachTo(Ship.position);
   weight2.attachTo(weight.position);
   weight2.attachTo(Ship.position);
-
-  // canvas.addEventListener("mousemove", (event: MouseEvent) => {
-  //   weight2.position.setX(event.clientX - canvas.offsetLeft);
-  //   weight2.position.setY(event.clientY - canvas.offsetTop);
-  //   weight2.update = [];
-  // });
 
   const allParticles = [weight, weight2, Ship];
 

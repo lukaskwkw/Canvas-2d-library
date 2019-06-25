@@ -7,6 +7,8 @@ export const fountain = () => (height, width) => (
   checkUnmount
 ) => {
   const context = canvas.getContext("2d");
+  height = canvas.height = window.innerHeight - canvas.offsetTop;
+  width = canvas.width = window.innerWidth - canvas.offsetLeft;
 
   const originPosition = {
     x: width * 0.5,

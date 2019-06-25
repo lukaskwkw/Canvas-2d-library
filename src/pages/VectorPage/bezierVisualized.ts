@@ -9,6 +9,8 @@ export const bezier = () => (height, width) => (
   checkUnmount
 ) => {
   const context = canvas.getContext("2d");
+  height = canvas.height = window.innerHeight - canvas.offsetTop;
+  width = canvas.width = window.innerWidth - canvas.offsetLeft;
 
   new PlaneSingleton(
     { dimensions: { width, height }, boundaries: { checkBottom: true } },
