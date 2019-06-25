@@ -6,6 +6,7 @@ import "./index.scss";
 import PAGES from "./routes";
 import Header from "./components/Header";
 import history from "./utils/history";
+import { Helmet } from "react-helmet";
 
 const App = ({ pathname }) => {
   const [page, setPage] = useState(pathname);
@@ -15,6 +16,9 @@ const App = ({ pathname }) => {
   const Handler = PAGES[page] || PAGES["/404"];
   return (
     <>
+      <Helmet>
+        <title>2d Canvas library</title>
+      </Helmet>
       <Header />
       <p>Loreme ipsum dolores</p>
       <Handler />
