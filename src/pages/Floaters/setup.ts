@@ -13,7 +13,7 @@ import {
 import { Circle } from "../../utils/canvas/rendeners";
 
 const getParticlesPositionPoints = (particles: Particle[]) =>
-  particles.map((circle: Particle) => circle.position.getCords());
+  particles.map((circle: Particle) => circle.getPosition());
 
 const setup = () => (height, width) => (
   canvas: HTMLCanvasElement,

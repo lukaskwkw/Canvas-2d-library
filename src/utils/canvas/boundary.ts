@@ -152,7 +152,7 @@ export const moveToOtherSide = (
 export const removeDeadParticles = (particles: Particle[], offset?: number) => {
   for (let index = 0; index < particles.length; index++) {
     const particle = particles[index];
-    const position = particle.position.getCords();
+    const position = particle.getPosition();
     onBoundaryCrossing(position, offset || particle.features.size, () =>
       particles.splice(index, 1)
     );
@@ -169,13 +169,12 @@ export const emmitter = (
   const { x, y } = positionToSetAfter;
 
   const emitParticle = () => {
-    particle.position.setCords({ x, y });
-    particle.velocity.setLength(speed);
-    particle.velocity.setAngle(angle);
+    particle.setPosition({ x, y });
+    particle.setVelocity(angle, speed);
   };
 
   onBoundaryCrossing(
-    particle.position.getCords(),
+    particle.getPosition(),
     offset || particle.features.size,
     emitParticle
   );

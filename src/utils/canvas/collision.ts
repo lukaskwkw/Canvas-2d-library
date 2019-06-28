@@ -1,21 +1,21 @@
 import Particle from "./particle";
-import Vector from "../vector";
+import Vector, { Point } from "../vector";
 
 const inCircleBoundary = (
-  circlePos: Vector,
+  circlePos: Point,
   radius: number,
-  pointToCheck: Vector
+  pointToCheck: Point
 ): boolean => {
-  const circleXMin = circlePos._x - radius;
-  const circleXMax = circlePos._x + radius;
-  const circleYMin = circlePos._y - radius;
-  const circleYMax = circlePos._y + radius;
+  const circleXMin = circlePos.x - radius;
+  const circleXMax = circlePos.x + radius;
+  const circleYMin = circlePos.y - radius;
+  const circleYMax = circlePos.y + radius;
 
   if (
-    pointToCheck._x <= circleXMax &&
-    pointToCheck._x >= circleXMin &&
-    pointToCheck._y <= circleYMax &&
-    pointToCheck._y >= circleYMin
+    pointToCheck.x <= circleXMax &&
+    pointToCheck.x >= circleXMin &&
+    pointToCheck.y <= circleYMax &&
+    pointToCheck.y >= circleYMin
   ) {
     return true;
   }
@@ -47,7 +47,7 @@ export const mousePointerCollisionUpdater = (
   return () => {
     canvas.addEventListener("mousemove", (event: MouseEvent) => {
       if (leftDown && movingParticle) {
-        movingParticle.position.setCords({
+        movingParticle.setPosition({
           x: event.clientX - canvas.offsetLeft,
           y: event.clientY - canvas.offsetTop
         });
@@ -56,14 +56,10 @@ export const mousePointerCollisionUpdater = (
 
       particles.forEach((particle: Particle) => {
         if (
-          inCircleBoundary(
-            particle.position,
-            particle.features.size,
-            new Vector(
-              event.clientX - canvas.offsetLeft,
-              event.clientY - canvas.offsetTop
-            )
-          )
+          inCircleBoundary(particle.getPosition(), particle.features.size, {
+            x: event.clientX - canvas.offsetLeft,
+            y: event.clientY - canvas.offsetTop
+          })
         ) {
           if (leftDown) {
             particle.features.fillColor = "purple";
@@ -109,7 +105,7 @@ export const touchCollisionUpdater = (
   return () => {
     canvas.addEventListener("touchmove", (event: TouchEvent) => {
       if (pressed && movingParticle) {
-        movingParticle.position.setCords({
+        movingParticle.setPosition({
           x: event.targetTouches[0].clientX - canvas.offsetLeft,
           y: event.targetTouches[0].clientY - canvas.offsetTop
         });
@@ -118,14 +114,10 @@ export const touchCollisionUpdater = (
 
       particles.forEach((particle: Particle) => {
         if (
-          inCircleBoundary(
-            particle.position,
-            particle.features.size,
-            new Vector(
-              event.targetTouches[0].clientX - canvas.offsetLeft,
-              event.targetTouches[0].clientY - canvas.offsetTop
-            )
-          ) &&
+          inCircleBoundary(particle.getPosition(), particle.features.size, {
+            x: event.targetTouches[0].clientX - canvas.offsetLeft,
+            y: event.targetTouches[0].clientY - canvas.offsetTop
+          }) &&
           !movingParticle
         ) {
           particle.features.fillColor = "purple";

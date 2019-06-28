@@ -16,18 +16,20 @@ const updaterFunction = (
   movingPointGenerator: Function,
   speedRatio: number = 0.1
 ) => {
-  particle.velocity.setLength(1);
-  particle.position.setCords(movingPointGenerator());
+  particle.setVelocity(2, 1);
+  particle.setPosition(movingPointGenerator());
 
   //to-do maybe construct less weight updater (in terms of cpu load) where the updater
   //makes distance diff between two points (after each other) here
   return () => {
     const movingPoint = movingPointGenerator();
-    const distanceY = movingPoint.y - particle.position._y;
-    const distancex = movingPoint.x - particle.position._x;
-    const straightDistance = Math.sqrt(distanceY ** 2 + distancex ** 2);
-    particle.velocity.setLength(straightDistance * speedRatio);
-    particle.velocity.setAngle(Math.atan2(distanceY, distancex));
+    const distanceY = movingPoint.y - particle.y;
+    const distanceX = movingPoint.x - particle.x;
+    const straightDistance = Math.sqrt(distanceY ** 2 + distanceX ** 2);
+    const movingForce = straightDistance * speedRatio;
+
+    particle.velocityX = (distanceX / straightDistance) * movingForce;
+    particle.velocityY = (distanceY / straightDistance) * movingForce;
   };
 };
 
@@ -52,6 +54,7 @@ export const orbitingFountain = () => (height, width) => (
     true
   );
 
+  // const downgradeRatio = 0.5;
   const downgradeRatio = width < 600 ? 0.2 : 1;
 
   const RedBaron: AdvancedGravityParticle = new AdvancedGravityParticle(
@@ -103,20 +106,31 @@ export const orbitingFountain = () => (height, width) => (
   );
 
   let particles = [];
-  const numbersOfParticles = 2100;
-  const particleSpeedFormula = () => 0.7 + Math.random() * 2;
+  const numbersOfParticles = 42100 * downgradeRatio;
+  const particleSpeedFormula = () => 0.7 + Math.random() * 5;
+  const PiByTwo = Math.PI / 2;
   const particleDirectionFormula = () =>
-    Math.PI / 2 + (Math.PI / 2) * (Math.random() - 0.5);
+    PiByTwo + PiByTwo * (Math.random() - 0.5);
 
   for (let i = 1; i < numbersOfParticles; i++) {
-    const circleSize = 1.2 + Math.random() * 3.5;
+    const circleSize = 4 + Math.random() * 3.5;
     const weight = circleSize;
-    const particle = new AdvancedGravityParticle(originPosition, {
-      size: circleSize * downgradeRatio,
-      speed: particleSpeedFormula(),
-      direction: -Math.PI / 3,
-      weight
-    });
+    const particle = new AdvancedGravityParticle(
+      originPosition,
+      {
+        size: circleSize * downgradeRatio,
+        speed: particleSpeedFormula(),
+        direction: -Math.PI / 3,
+        weight
+      },
+      ({ x, y }, size) => {
+        // context.beginPath();
+        context.moveTo(x, y);
+        context.lineTo(x + size, y + size);
+        // context.stroke();
+        // context.strokeRect(x, y, size, size);
+      }
+    );
 
     particle.setGravityTowards(RedBaron);
     particle.setGravityTowards(HugeGreen);
@@ -184,8 +198,10 @@ export const orbitingFountain = () => (height, width) => (
   });
 
   const sunsArray = [RedBaron, HugeGreen, BlueBilbo, GreenGoblin];
-  mousePointerCollisionUpdater([...particles, ...sunsArray], canvas)();
-  touchCollisionUpdater([...sunsArray, ...particles], canvas)();
+  mousePointerCollisionUpdater(sunsArray, canvas)();
+  touchCollisionUpdater(sunsArray, canvas)();
+  // mousePointerCollisionUpdater([...particles, ...sunsArray], canvas)();
+  // touchCollisionUpdater([...sunsArray, ...particles], canvas)();
 
   const render = () => {
     if (checkUnmount() || particles.length < 2) {
@@ -199,17 +215,33 @@ export const orbitingFountain = () => (height, width) => (
     HugeGreen.render();
     BlueBilbo.render();
     GreenGoblin.render();
+    // context.fillStyle = "#000";
 
-    particles.forEach((particle: AdvancedGravityParticle) => {
+    context.beginPath();
+    for (let i = 0; i < particles.length; i++) {
+      const particle = particles[i];
       particle.render();
       emmitter(
         originPosition,
-        particleSpeedFormula(),
+        1.2,
         particleDirectionFormula(),
         particle,
         particle.features.size
       );
-    });
+    }
+    context.stroke();
+    // context.fill();
+
+    // particles.forEach((particle: AdvancedGravityParticle) => {
+    //   particle.render();
+    //   emmitter(
+    //     originPosition,
+    //     particleSpeedFormula(),
+    //     particleDirectionFormula(),
+    //     particle,
+    //     particle.features.size
+    //   );
+    // });
 
     requestAnimationFrame(render);
   };

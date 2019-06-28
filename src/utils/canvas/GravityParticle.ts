@@ -25,31 +25,35 @@ export interface PlainGravityFeatures extends VelocityFeatures {
 }
 
 interface PlainGravity {
-  gravity: Vector;
+  gravityX: number;
+  gravityY: number;
   features: PlainGravityFeatures;
   togglePlainGravitation(): void;
 }
 
 const setPlainGravity = (
-  gravity: Vector,
-  weight: number,
-  yPosition: number,
+  particePG: PlainGravityParticle,
   planeHeight: number
-) => gravity.setY(planeGravityEquation(weight, yPosition, planeHeight));
+) =>
+  (particePG.gravityY = planeGravityEquation(
+    particePG.features.weight,
+    particePG.y,
+    planeHeight
+  ));
 
 const plainGravityUpdater = (particleToUpdate: PlainGravityParticle) => {
-  setPlainGravity(
-    particleToUpdate.gravity,
-    particleToUpdate.features.weight,
-    particleToUpdate.position.getY(),
-    particleToUpdate.planeDimensions.height
-  );
-  particleToUpdate.accelerate(particleToUpdate.gravity);
+  const {
+    gravityY,
+    planeDimensions: { height }
+  } = particleToUpdate;
+  setPlainGravity(particleToUpdate, height);
+  particleToUpdate.accelerate(0, gravityY);
 };
 
 export class PlainGravityParticle extends VelocityParticle
   implements PlainGravity {
-  gravity: Vector = new Vector(0, 0);
+  gravityX: number = 0;
+  gravityY: number = 0;
   features: PlainGravityFeatures;
 
   togglePlainGravitation() {
@@ -102,32 +106,28 @@ const checkHit = (
 ) => {
   if (distance <= graviter.features.size) {
     //Set particle out of plane => emit it again / remove it
-    particleToUpdate.position.setCords({
-      x: -10000,
-      y: -10000
-    });
+    particleToUpdate.x = -10000;
+    particleToUpdate.y = -10000;
   }
 };
 
 const orbiteUpdater = (particleToUpdate: AdvancedGravityParticle) => {
   particleToUpdate.orbites.forEach((graviter: AdvancedGravityParticle) => {
-    const distanceY =
-      graviter.position.getY() - particleToUpdate.position.getY();
-    const distanceX =
-      graviter.position.getX() - particleToUpdate.position.getX();
+    const distanceX = graviter.x - particleToUpdate.x;
+    const distanceY = graviter.y - particleToUpdate.y;
     const distance = Math.sqrt(distanceY ** 2 + distanceX ** 2);
+    const gravityForce = gravityOrbiteEquation(
+      graviter.features.weight,
+      particleToUpdate.features.weight,
+      distance
+    );
+
+    const orbitingForceX = (distanceX / distance) * gravityForce;
+    const orbitingForceY = (distanceY / distance) * gravityForce;
 
     checkHit(particleToUpdate, graviter, distance);
-    const gravityVector = new Vector(distanceX, distanceY);
-    gravityVector.setAngle(Math.atan2(distanceY, distanceX));
-    gravityVector.setLength(
-      gravityOrbiteEquation(
-        graviter.features.weight,
-        particleToUpdate.features.weight,
-        distance
-      )
-    );
-    particleToUpdate.accelerate(gravityVector);
+
+    particleToUpdate.accelerate(orbitingForceX, orbitingForceY);
   });
 };
 

@@ -29,14 +29,14 @@ export const setup = () => (height, width) => (
   const screenMargins = 20;
   const downgradeRatio = width < 600 ? 0.5 : 1;
 
-  const commonK = 0.05;
+  const commonK = 0.01;
   const weight = new SpringWithGravity(randomPoint(screenMargins), {
     size: 15 * downgradeRatio,
     k: commonK,
-    weight: 10,
+    weight: 20,
     friction: 0.95,
     offset: 150,
-    speed: 100
+    speed: 10
   });
 
   const weight2 = new SpringWithGravity(randomPoint(screenMargins), {
@@ -45,26 +45,26 @@ export const setup = () => (height, width) => (
     weight: 10,
     friction: 0.95,
     offset: 150,
-    speed: 100,
-    pointsOfAttachments: [weight.position]
+    speed: 10
+    // pointsOfAttachments: [weight.getPosition()]
   });
 
-  const Ship = new PlayerSpring(randomPoint(screenMargins), {
-    size: 20 * downgradeRatio,
-    k: commonK,
-    weight: 20,
-    friction: 0.95,
-    offset: 150,
-    speed: 100,
-    pointsOfAttachments: [weight.position, weight2.position]
-  });
+  // const Ship = new PlayerSpring(randomPoint(screenMargins), {
+  //   size: 20 * downgradeRatio,
+  //   k: commonK,
+  //   weight: 20,
+  //   friction: 0.95,
+  //   offset: 150,
+  //   speed: 10,
+  //   pointsOfAttachments: [weight.getPosition(), weight2.getPosition()]
+  // });
 
-  weight.attachTo(weight2.position);
-  weight.attachTo(Ship.position);
-  weight2.attachTo(weight.position);
-  weight2.attachTo(Ship.position);
+  weight.attachTo(weight2.getPosition());
+  // weight.attachTo(Ship.getPosition());
+  weight2.attachTo(weight.getPosition());
+  // weight2.attachTo(Ship.getPosition());
 
-  const allParticles = [weight, weight2, Ship];
+  const allParticles = [weight, weight2 /* Ship */];
 
   mousePointerCollisionUpdater(allParticles, canvas)();
   touchCollisionUpdater(allParticles, canvas)();
@@ -76,14 +76,14 @@ export const setup = () => (height, width) => (
 
     context.clearRect(0, 0, width, height);
 
-    Ship.render();
+    // Ship.render();
     weight.render();
     weight2.render();
     connectDotsAndStroke([
-      weight.position.getCords(),
-      weight2.position.getCords(),
-      Ship.position.getCords(),
-      weight.position.getCords()
+      weight.getPosition(),
+      weight2.getPosition(),
+      // Ship.getPosition(),
+      weight.getPosition()
     ]);
 
     requestAnimationFrame(render);

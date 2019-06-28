@@ -7,16 +7,17 @@ export const Circle = (context?: CanvasRenderingContext2D) => (
   originColor: string = "#000"
 ) => {
   const cxt = context || new PlaneSingleton().context;
-
+  const piDoubled = Math.PI * 2;
+  cxt.fillStyle = originColor;
   return {
     renderer: (
       { x, y }: Point = originPosition,
       size: number = originSize,
       color: string = originColor
     ) => {
-      cxt.fillStyle = color;
+      // cxt.fillStyle = color;
       cxt.beginPath();
-      cxt.arc(x, y, size, 0, Math.PI * 2, false);
+      cxt.arc(x, y, size, 0, piDoubled, false);
       cxt.fill();
     }
   };

@@ -50,7 +50,7 @@ export const JetEngine = {
       updater();
     });
 
-    const { x, y } = particle.position.getCords();
+    const { x, y } = particle.getPosition();
     const { size, fillColor } = particle.features;
 
     particle.renderer(

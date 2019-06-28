@@ -10,35 +10,41 @@ const UPDATERS = {
 
 export interface SpringFeatures extends PlainGravityFeatures {
   k: number;
-  pointsOfAttachments?: Vector[];
+  pointsOfAttachments?: Array<Point>;
   drawAttachementsLines?: boolean;
   offset?: number;
 }
 
 interface Spring {
   features: SpringFeatures;
-  attachTo(position: Vector): void;
+  attachTo(position: Point): void;
 }
 
 const springUpdater = (spring: SpringWithGravity) => () => {
-  spring.features.pointsOfAttachments.forEach((point: Vector) => {
-    const distance = point.substractVector(spring.position);
+  spring.features.pointsOfAttachments.forEach((point: Point) => {
+    const distanceX = point.x - spring.x;
+    const distanceY = point.y - spring.y;
 
-    const distanceLenght = distance.getLength();
+    const distance = Math.sqrt(distanceX ** 2 + distanceY ** 2);
 
-    distance.setLength(distanceLenght - spring.features.offset);
-
-    const SpringAcceleration = distance.multiply(spring.features.k);
-    spring.accelerate(SpringAcceleration);
+    const springForce = (distance - spring.features.offset) * spring.features.k;
+    const springForceX = (distanceX / distance) * springForce;
+    const springForceY = (distanceY / distance) * springForce;
+    spring.accelerate(springForceX, springForceY);
   });
 };
 
-const drawLinesToAttachements = (spring: SpringWithGravity) => () => {
-  spring.context.beginPath();
-  spring.features.pointsOfAttachments.forEach((point: Vector) => {
-    connectDots([spring.position.getCords(), point.getCords()]);
+const drawLinesToAttachements = ({
+  context,
+  features: { pointsOfAttachments },
+  x,
+  y
+}: SpringWithGravity) => () => {
+  context.beginPath();
+  pointsOfAttachments.forEach((point: Point) => {
+    connectDots([{ x, y }, point]);
   });
-  spring.context.stroke();
+  context.stroke();
 };
 
 class SpringWithGravity extends PlainGravityParticle implements Spring {
@@ -71,7 +77,7 @@ class SpringWithGravity extends PlainGravityParticle implements Spring {
     }
   }
 
-  attachTo(position: Vector) {
+  attachTo(position: Point) {
     this.features.pointsOfAttachments.push(position);
   }
 }

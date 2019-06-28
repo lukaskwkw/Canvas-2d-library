@@ -14,11 +14,12 @@ const UPDATERS = {
 };
 
 interface Velocity {
-  velocity: Vector;
+  velocityX: number;
+  velocityY: number;
   features: VelocityFeatures;
   attachFriction(value?: number): any;
   addBoundaryFunction(func: Function, args: any[]): any;
-  accelerate(vector: Vector): void;
+  accelerate(ax: number, ay: number): void;
   render: Function;
 }
 
@@ -29,17 +30,21 @@ export interface VelocityFeatures extends SimpleFeatures {
   boundary?: BoundriesSelector;
 }
 
-const friction = (velocity: Vector, friction: number) => () =>
-  velocity.multiplyTo(friction);
+const friction = (particleV: VelocityParticle, friction: number) => () => {
+  particleV.velocityX * friction;
+  particleV.velocityY * friction;
+};
 
 const DefaultVelocityFeatures = {
   speed: 10,
   direction: -Math.PI / 4,
   friction: 1
 };
+const piDoubled = Math.PI * 2;
 
 class VelocityParticle extends Particle implements Velocity {
-  velocity: Vector = new Vector(0, 0);
+  velocityX: number;
+  velocityY: number;
   features: VelocityFeatures;
 
   constructor(
@@ -54,12 +59,15 @@ class VelocityParticle extends Particle implements Velocity {
 
     const { speed, size, direction, friction } = this.features;
 
-    this.velocity = new Vector(0, 0);
-    this.velocity.setLength(speed);
-    this.velocity.setAngle(direction);
+    this.velocityX = Math.cos(direction) * speed;
+    this.velocityY = Math.sin(direction) * speed;
+
     this.update.push({
       name: UPDATERS.VELOCITY,
-      updater: () => this.position.addTo(this.velocity)
+      updater: () => {
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+      }
     });
 
     if (friction > 0 && friction < 1) {
@@ -69,26 +77,32 @@ class VelocityParticle extends Particle implements Velocity {
     const boundary =
       this.features.boundary || new PlaneSingleton().features.boundaries;
 
-    if (boundary && some(boundary)(key => boundary[key] === true)) {
-      this.addBoundaryFunction(bouncingBoundires, [
-        this.velocity,
-        this.position,
-        this.planeDimensions,
-        size,
-        boundary
-      ]);
-    }
+    // if (boundary && some(boundary)(key => boundary[key] === true)) {
+    //   this.addBoundaryFunction(bouncingBoundires, [
+    //     this.velocity,
+    //     this.position,
+    //     this.planeDimensions,
+    //     size,
+    //     boundary
+    //   ]);
+    // }
   }
 
-  accelerate(vector: Vector) {
-    this.velocity.addTo(vector);
+  setVelocity(angle: number, speed: number) {
+    this.velocityX = Math.cos(angle) * speed;
+    this.velocityY = Math.sin(angle) * speed;
+  }
+
+  accelerate(accelerateX, accelerateY) {
+    this.velocityX += accelerateX;
+    this.velocityY += accelerateY;
   }
 
   attachFriction(value = this.features.friction) {
     this.features.friction = value;
     this.update.push({
       name: UPDATERS.FRICTION,
-      updater: friction(this.velocity, this.features.friction)
+      updater: friction(this, this.features.friction)
     });
   }
 
@@ -108,8 +122,13 @@ class VelocityParticle extends Particle implements Velocity {
     this.update.forEach(({ updater }: UpdateObject) => {
       updater();
     });
+
+    const { context: ctx, x, y } = this;
+    // cxt.beginPath();
+    // cxt.arc(x, y, 4, 0, piDoubled, false);
+    // cxt.fill();
     this.renderer(
-      this.position.getCords(),
+      this.getPosition(),
       this.features.size,
       this.features.fillColor
     );

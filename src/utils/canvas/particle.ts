@@ -45,7 +45,8 @@ export interface SimpleFeatures {
 }
 
 export interface Simple {
-  position: Vector;
+  x: number;
+  y: number;
   features: SimpleFeatures;
   renderer: Function;
   update: UpdateObject[];
@@ -54,7 +55,8 @@ export interface Simple {
 class Particle implements Simple {
   planeDimensions: PlaneDimensions = PlaneDefaultDimensions;
   renderer: Function;
-  position: Vector;
+  x: number = 0;
+  y: number = 0;
   features: ParticleFeatures;
   context?: CanvasRenderingContext2D;
   update: UpdateObject[] = [];
@@ -72,7 +74,8 @@ class Particle implements Simple {
     this.context = context || plane.context;
     const { x, y } = particlePosition;
 
-    this.position = new Vector(x, y);
+    this.x = x;
+    this.y = y;
     this.features = { ...SimpleFeatures, ...particleFeatures };
 
     if (renderer) {
@@ -89,9 +92,21 @@ class Particle implements Simple {
     }
   }
 
+  getPosition(): Point {
+    return {
+      x: this.x,
+      y: this.y
+    };
+  }
+
+  setPosition(point: Point): void {
+    this.x = point.x;
+    this.y = point.y;
+  }
+
   render() {
     this.renderer(
-      this.position.getCords(),
+      { x: this.x, y: this.y },
       this.features.size,
       this.features.fillColor
     );
