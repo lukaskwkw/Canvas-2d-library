@@ -1,4 +1,5 @@
 import { Point } from "../vector";
+// import { rangeOf } from "../array";
 
 export const lineInterpolation = (t: number, p1: Point, p2: Point): Point => {
   return { x: (1 - t) * p1.x + t * p2.x, y: (1 - t) * p1.y + t * p2.y };
@@ -44,6 +45,186 @@ export const cubicBezierIteration = (
     t * t * t * p3.y;
   return pFinal;
 };
+
+function* iterateOver(intervals, func) {
+  const iterationSpeed = 1 / intervals;
+  const maxIterationValue = 1 - iterationSpeed;
+  let t = 0;
+
+  while (t <= maxIterationValue) {
+    t += iterationSpeed;
+    yield func(t);
+  }
+}
+
+const getMiddleOfTwoPoints = (A: Point, B: Point) => ({
+  x: (A.x + B.x) / 2,
+  y: (A.y + B.y) / 2
+});
+
+export function* moveAlongMultiQuadricBaziersGen(
+  intervals: number,
+  originPoints: Point[]
+) {
+  const pointsLength = originPoints.length;
+  //Must be at least 4 points todo: make compatibile with min 3 points
+  if (pointsLength < 4) {
+    return;
+  }
+
+  let [firstStartPoint, firstControlPoint, firstEndPoint] = originPoints;
+
+  let firstMiddleEnd = getMiddleOfTwoPoints(firstControlPoint, firstEndPoint);
+
+  for (const iterator of iterateOver(intervals, step =>
+    quadricBezierIteration(
+      step,
+      firstStartPoint,
+      firstControlPoint,
+      firstMiddleEnd,
+      false
+    )
+  )) {
+    yield iterator;
+  }
+
+  let endPointMiddle = {
+    x: 0,
+    y: 0
+  };
+
+  for (let index = 2; index + 2 < pointsLength; index++) {
+    const [startPoint, controlPoint, endPoint] = originPoints.slice(
+      index - 1,
+      index + 2
+    );
+    const startPointMiddle = getMiddleOfTwoPoints(startPoint, controlPoint);
+
+    endPointMiddle = getMiddleOfTwoPoints(controlPoint, endPoint);
+
+    for (const iterator of iterateOver(intervals, step =>
+      quadricBezierIteration(
+        step,
+        startPointMiddle,
+        controlPoint,
+        endPointMiddle,
+        false
+      )
+    )) {
+      yield iterator;
+    }
+  }
+
+  let [penultimatePoint, lastPoint] = originPoints.slice(
+    pointsLength - 2,
+    pointsLength
+  );
+
+  for (const iterator of iterateOver(intervals, step =>
+    quadricBezierIteration(
+      step,
+      endPointMiddle,
+      penultimatePoint,
+      lastPoint,
+      false
+    )
+  )) {
+    yield iterator;
+  }
+}
+
+//TODO: implement compatible with interaction version of that^ function
+
+/* export function* moveAlongMultiQuadricBaziersGen(
+  intervals: number,
+  originPoints: Point[]
+) {
+  const pointsLength = originPoints.length;
+  //Must be at least 4 points todo: make compatibile with min 3 points
+  if (pointsLength < 4) {
+    return;
+  }
+
+  let [firstStartPoint, firstControlPoint, firstEndPoint] = originPoints;
+
+  let firstMiddleEnd = getMiddleOfTwoPoints(firstControlPoint, firstEndPoint);
+
+  for (const iterator of iterateOver(intervals, step =>
+    quadricBezierIteration(
+      step,
+      firstStartPoint,
+      firstControlPoint,
+      firstMiddleEnd,
+      false
+    )
+  )) {
+    yield iterator;
+  }
+
+  const getBodyPoints = (points, index) => {
+    const [startPoint, controlPoint, endPoint] = points.slice(
+      index - 1,
+      index + 2
+    );
+    const startPointMiddle = getMiddleOfTwoPoints(startPoint, controlPoint);
+
+    const endPointMiddle = getMiddleOfTwoPoints(controlPoint, endPoint);
+
+    return [startPointMiddle, controlPoint, endPointMiddle];
+  };
+
+  let [startPointMiddle, controlPoint, endPointMiddle] = rangeOf(3, () => ({
+    x: 0,
+    y: 0
+  }));
+
+  for (let index = 2; index + 2 < pointsLength; index++) {
+    const iterationSpeed = 1 / intervals;
+    const maxIterationValue = 1 - iterationSpeed;
+    let t = 0;
+
+    [startPointMiddle, controlPoint, endPointMiddle] = getBodyPoints(
+      originPoints,
+      index
+    );
+
+    while (t <= maxIterationValue) {
+      const newPoints: Array<Point> = yield quadricBezierIteration(
+        t,
+        startPointMiddle,
+        controlPoint,
+        endPointMiddle,
+        false
+      );
+      if (newPoints) {
+        originPoints = newPoints;
+        [startPointMiddle, controlPoint, endPointMiddle] = getBodyPoints(
+          originPoints,
+          index
+        );
+      }
+
+      t += iterationSpeed;
+    }
+  }
+
+  let [penultimatePoint, lastPoint] = originPoints.slice(
+    pointsLength - 2,
+    pointsLength
+  );
+
+  for (const iterator of iterateOver(intervals, step =>
+    quadricBezierIteration(
+      step,
+      endPointMiddle,
+      penultimatePoint,
+      lastPoint,
+      false
+    )
+  )) {
+    yield iterator;
+  }
+} */
 
 export const moveAlongMultiQuadricBaziers = (
   intervals: number,

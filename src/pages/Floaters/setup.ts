@@ -6,7 +6,10 @@ import {
   touchCollisionUpdater
 } from "../../utils/canvas/collision";
 import Particle from "../../utils/canvas/particle";
-import { moveAlongMultiQuadricBaziers } from "../../utils/canvas/interpolation";
+import {
+  // moveAlongMultiQuadricBaziers,
+  moveAlongMultiQuadricBaziersGen
+} from "../../utils/canvas/interpolation";
 import { Circle } from "../../utils/canvas/rendeners";
 
 const getParticlesPositionPoints = (particles: Particle[]) =>
@@ -30,7 +33,7 @@ const setup = () => (height, width) => (
     true
   );
 
-  const numberOfPoints = 20;
+  const numberOfPoints = 15;
 
   const mulitQuadricCircles = Array.from(
     { length: numberOfPoints },
@@ -44,11 +47,16 @@ const setup = () => (height, width) => (
 
   let quadricPoints = getParticlesPositionPoints(mulitQuadricCircles);
 
-  const interationsPerQuadric = 120;
-  const getMovingPoint = moveAlongMultiQuadricBaziers(
+  const interationsPerQuadric = 25;
+  const getMovingPoint = moveAlongMultiQuadricBaziersGen(
     interationsPerQuadric,
     quadricPoints
   );
+
+  // const getMovingPoint2 = moveAlongMultiQuadricBaziers(
+  //   interationsPerQuadric,
+  //   quadricPoints
+  // );
 
   const render = () => {
     if (checkUnmount()) {
@@ -63,9 +71,13 @@ const setup = () => (height, width) => (
 
     mulitQuadricCircles.forEach((circle: Particle) => circle.render());
 
-    const point = getMovingPoint(quadricPoints, true);
+    const point = getMovingPoint.next(quadricPoints);
 
-    movingCircle.renderer(point);
+    // movingCircle.renderer(getMovingPoint2());
+
+    movingCircle.renderer(
+      point.value || quadricPoints[quadricPoints.length - 1]
+    );
     requestAnimationFrame(render);
   };
 
