@@ -9,6 +9,7 @@ import {
   touchCollisionUpdater
 } from "../../utils/canvas/collision";
 import VelocityParticle from "../../utils/canvas/VelocityParticle";
+import { rangeOf } from "../../utils/array";
 // import { drawMultiMiddleQudricBeziers } from "../../utils/canvas/draw";
 
 const updaterFunction = (
@@ -54,81 +55,79 @@ export const orbitingFountain = () => (height, width) => (
     true
   );
 
-  // const downgradeRatio = 0.5;
+  // const downgradeRatio = 0.2;
   const downgradeRatio = width < 600 ? 0.2 : 1;
 
   const RedBaron: AdvancedGravityParticle = new AdvancedGravityParticle(
     randomPoint(10),
     // { x: width / 1.2, y: height / 4 },
     {
-      size: 75 * downgradeRatio,
+      size: 53 * downgradeRatio,
       weight: 1455410,
       fillColor: "rgba(200,10,10, 0.5)",
       speed: 0
     },
-    circlePulse(100 * downgradeRatio)
+    circlePulse(80 * downgradeRatio)
   );
 
   const HugeGreen: AdvancedGravityParticle = new AdvancedGravityParticle(
     randomPoint(10),
     // { x: width / 6, y: height / 2 },
     {
-      size: 55 * downgradeRatio,
-      weight: -314100,
+      size: 33 * downgradeRatio,
+      weight: -214100,
       fillColor: "rgba(100,100,10, 0.5)",
       speed: 0
     },
-    circlePulse(75 * downgradeRatio)
+    circlePulse(55 * downgradeRatio)
   );
 
   const BlueBilbo: AdvancedGravityParticle = new AdvancedGravityParticle(
     randomPoint(10),
     // { x: width / 2, y: height / 1.1 },
     {
-      size: 35 * downgradeRatio,
+      size: 13 * downgradeRatio,
       weight: 455520,
       fillColor: "rgba(0,100,100, 0.2)",
       speed: 0
     },
-    circlePulse(45 * downgradeRatio)
+    circlePulse(25 * downgradeRatio)
   );
 
   const GreenGoblin: AdvancedGravityParticle = new AdvancedGravityParticle(
     randomPoint(10),
     // { x: width / 2, y: height / 8 },
     {
-      size: 22 * downgradeRatio,
-      weight: -255520,
+      size: 8 * downgradeRatio,
+      weight: -155520,
       fillColor: "rgba(10,255,100, 0.92)",
       speed: 0
     },
-    circlePulse(30 * downgradeRatio)
+    circlePulse(10 * downgradeRatio)
   );
 
   let particles = [];
-  const numbersOfParticles = 42100 * downgradeRatio;
+  const numbersOfParticles = 50;
+  let amount = 50;
   const particleSpeedFormula = () => 0.7 + Math.random() * 5;
   const PiByTwo = Math.PI / 2;
   const particleDirectionFormula = () =>
     PiByTwo + PiByTwo * (Math.random() - 0.5);
 
+  const circleSizeFormula = () => 4 + Math.random() * 3.5;
   for (let i = 1; i < numbersOfParticles; i++) {
-    const circleSize = 4 + Math.random() * 3.5;
-    const weight = circleSize;
+    const weight = circleSizeFormula();
     const particle = new AdvancedGravityParticle(
       originPosition,
       {
-        size: circleSize * downgradeRatio,
+        size: circleSizeFormula(),
         speed: particleSpeedFormula(),
         direction: -Math.PI / 3,
         weight
       },
       ({ x, y }, size) => {
-        // context.beginPath();
         context.moveTo(x, y);
         context.lineTo(x + size, y + size);
-        // context.stroke();
-        // context.strokeRect(x, y, size, size);
       }
     );
 
@@ -159,7 +158,7 @@ export const orbitingFountain = () => (height, width) => (
   );
 
   //less = faster
-  const interpolationIntervals = 1200;
+  const interpolationIntervals = 700;
   const mulitQuadricMovePoint = moveAlongMultiQuadricBaziers(
     interpolationIntervals,
     testArray
@@ -200,10 +199,18 @@ export const orbitingFountain = () => (height, width) => (
   const sunsArray = [RedBaron, HugeGreen, BlueBilbo, GreenGoblin];
   mousePointerCollisionUpdater(sunsArray, canvas)();
   touchCollisionUpdater(sunsArray, canvas)();
-  // mousePointerCollisionUpdater([...particles, ...sunsArray], canvas)();
-  // touchCollisionUpdater([...sunsArray, ...particles], canvas)();
 
-  const render = () => {
+  context.font = "24px Arial";
+
+  let prevDelta = 0;
+  let fpsArray = [];
+  let counter = 0;
+  let average = 0;
+  const checkCounterEvery = 30;
+
+  const render = timestamp => {
+    let delta = timestamp - prevDelta;
+
     if (checkUnmount() || particles.length < 2) {
       return;
     }
@@ -223,28 +230,63 @@ export const orbitingFountain = () => (height, width) => (
       particle.render();
       emmitter(
         originPosition,
-        1.2,
+        0.21,
         particleDirectionFormula(),
         particle,
         particle.features.size
       );
     }
     context.stroke();
-    // context.fill();
 
-    // particles.forEach((particle: AdvancedGravityParticle) => {
-    //   particle.render();
-    //   emmitter(
-    //     originPosition,
-    //     particleSpeedFormula(),
-    //     particleDirectionFormula(),
-    //     particle,
-    //     particle.features.size
-    //   );
-    // });
+    if (counter >= checkCounterEvery) {
+      let sum = fpsArray.reduce(function(a, b) {
+        return a + b;
+      });
+      average = ~~(sum / fpsArray.length);
 
+      if (average > 35) {
+        const newParticles = rangeOf(amount, () => {
+          const particle = new AdvancedGravityParticle(
+            originPosition,
+            {
+              size: circleSizeFormula(),
+              speed: particleSpeedFormula(),
+              direction: -Math.PI / 3,
+              weight: circleSizeFormula()
+            },
+            ({ x, y }, size) => {
+              context.moveTo(x, y);
+              context.lineTo(x + size, y + size);
+            }
+          );
+          particle.setGravityTowards(RedBaron);
+          particle.setGravityTowards(HugeGreen);
+          particle.setGravityTowards(BlueBilbo);
+          particle.setGravityTowards(GreenGoblin);
+          return particle;
+        });
+
+        particles.push(...newParticles);
+        amount *= average > 50 ? 1.5 : 1;
+        console.info(
+          `Added ${amount} more particles ! new length = ${particles.length}`
+        );
+      }
+      counter = 0;
+      fpsArray = [];
+    } else {
+      const currentFPS = 1000 / delta;
+      fpsArray.push(currentFPS);
+      counter++;
+    }
+
+    context.fillText(`${average}`, 10, 50);
+    context.fillText(`Number of particles: ${particles.length}`, 10, 80);
+    context.fillText(`${canvas.clientWidth}x${canvas.clientHeight}`, 10, 120);
+
+    prevDelta = timestamp;
     requestAnimationFrame(render);
   };
 
-  render();
+  render(performance.now());
 };

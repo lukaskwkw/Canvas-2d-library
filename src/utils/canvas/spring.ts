@@ -10,7 +10,7 @@ const UPDATERS = {
 
 export interface SpringFeatures extends PlainGravityFeatures {
   k: number;
-  pointsOfAttachments?: Array<Point>;
+  pointsOfAttachments?: Point[];
   drawAttachementsLines?: boolean;
   offset?: number;
 }
@@ -47,6 +47,7 @@ const drawLinesToAttachements = ({
   context.stroke();
 };
 
+//TODO: repair spring
 class SpringWithGravity extends PlainGravityParticle implements Spring {
   features: SpringFeatures;
 
