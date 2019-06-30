@@ -15,10 +15,66 @@ export const Circle = (context?: CanvasRenderingContext2D) => (
       size: number = originSize,
       color: string = originColor
     ) => {
-      // cxt.fillStyle = color;
+      cxt.fillStyle = color;
       cxt.beginPath();
       cxt.arc(x, y, size, 0, piDoubled, false);
       cxt.fill();
+    }
+  };
+};
+
+export const circlePulse = (
+  maxRadius = 50,
+  minRadius = 20,
+  x = null,
+  y = null,
+  planeDimensions?: PlaneDimensions,
+  context?: CanvasRenderingContext2D
+) => {
+  const plane = new PlaneSingleton();
+  const { width, height } = planeDimensions || plane.features.dimensions;
+  const cxt = context || plane.context;
+
+  const startX = typeof x == "number" ? x : width * 0.5,
+    startY = typeof y == "number" ? y : height * 0.5,
+    offset = maxRadius / 2;
+
+  let radian = 0;
+  const speed = 0.05;
+  let radius = 0;
+
+  return (point: Point = { x: startX, y: startY }, size = minRadius, color) => {
+    radius = offset + size / 2 + Math.sin(radian) * (offset - size / 2);
+
+    cxt.fillStyle = color;
+    cxt.beginPath();
+    cxt.arc(point.x, point.y, radius, 0, Math.PI * 2, false);
+    cxt.fill();
+
+    radian += speed;
+  };
+};
+
+export const ShapeInCircle = (
+  radius?: number,
+  angle: number = Math.PI / 6,
+  edges: number = 3,
+  context?: CanvasRenderingContext2D
+) => {
+  const ctx = context || new PlaneSingleton().context;
+
+  const PiDoubled = Math.PI * 2;
+  const angleIteration = PiDoubled / edges;
+  return ({ x, y }: Point, size = radius) => {
+    const drawOffsetX = Math.cos(angle) * size;
+    const drawOffsetY = Math.sin(angle) * size;
+    const startDrawX = x + drawOffsetX;
+    const startDrawY = y + drawOffsetY;
+    ctx.moveTo(startDrawX, startDrawY);
+    for (let arc = 0; arc <= PiDoubled; arc += angleIteration) {
+      const arcX = Math.cos(arc) * size;
+      const arcY = Math.sin(arc) * size;
+      ctx.lineTo(x + arcX, y + arcY);
     }
   };
 };
@@ -254,37 +310,5 @@ export const SpaceShip = (
     // ctx.fill(region, 'evenodd');
     cxt.stroke();
     cxt.restore();
-  };
-};
-
-export const circlePulse = (
-  maxRadius = 50,
-  minRadius = 20,
-  x = null,
-  y = null,
-  planeDimensions?: PlaneDimensions,
-  context?: CanvasRenderingContext2D
-) => {
-  const plane = new PlaneSingleton();
-  const { width, height } = planeDimensions || plane.features.dimensions;
-  const cxt = context || plane.context;
-
-  const startX = typeof x == "number" ? x : width * 0.5,
-    startY = typeof y == "number" ? y : height * 0.5,
-    offset = maxRadius / 2;
-
-  let radian = 0;
-  const speed = 0.05;
-  let radius = 0;
-
-  return (point: Point = { x: startX, y: startY }, size = minRadius, color) => {
-    radius = offset + size / 2 + Math.sin(radian) * (offset - size / 2);
-
-    cxt.fillStyle = color;
-    cxt.beginPath();
-    cxt.arc(point.x, point.y, radius, 0, Math.PI * 2, false);
-    cxt.fill();
-
-    radian += speed;
   };
 };

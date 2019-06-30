@@ -1,5 +1,5 @@
 import Particle, { SimpleFeatures, UpdateObject } from "./particle";
-import Vector, { Point } from "../vector";
+import { Point } from "../vector";
 import { PlaneDimensions, PlaneSingleton } from "./plane";
 import {
   bouncingBoundires,
@@ -40,7 +40,6 @@ const DefaultVelocityFeatures = {
   direction: -Math.PI / 4,
   friction: 1
 };
-const piDoubled = Math.PI * 2;
 
 class VelocityParticle extends Particle implements Velocity {
   velocityX: number;
@@ -77,15 +76,17 @@ class VelocityParticle extends Particle implements Velocity {
     const boundary =
       this.features.boundary || new PlaneSingleton().features.boundaries;
 
-    // if (boundary && some(boundary)(key => boundary[key] === true)) {
-    //   this.addBoundaryFunction(bouncingBoundires, [
-    //     this.velocity,
-    //     this.position,
-    //     this.planeDimensions,
-    //     size,
-    //     boundary
-    //   ]);
-    // }
+    //TODO: Check if it works
+    //TODO2: Check performance
+    if (boundary && some(boundary)(key => boundary[key] === true)) {
+      this.addBoundaryFunction(bouncingBoundires, [
+        { x: this.velocityX, y: this.velocityY },
+        { x: this.x, y: this.y },
+        this.planeDimensions,
+        size,
+        boundary
+      ]);
+    }
   }
 
   setVelocity(angle: number, speed: number) {
@@ -123,10 +124,6 @@ class VelocityParticle extends Particle implements Velocity {
       updater();
     });
 
-    const { context: ctx, x, y } = this;
-    // cxt.beginPath();
-    // cxt.arc(x, y, 4, 0, piDoubled, false);
-    // cxt.fill();
     this.renderer(
       this.getPosition(),
       this.features.size,

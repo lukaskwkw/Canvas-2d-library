@@ -76,8 +76,8 @@ const onBoundaryCrossing = (
 };
 
 export const bouncingBoundires = (
-  velocity: Vector,
-  position: Vector,
+  velocity: Point,
+  position: Point,
   planeDimensions: PlaneDimensions,
   offset: number = 0,
   selector: BoundriesSelector
@@ -94,31 +94,31 @@ export const bouncingBoundires = (
   const actions = {
     actionTop: () => {
       if (checkTop) {
-        position.setY(offset);
-        velocity.setY(velocity.getY() * downgradeBy);
+        position.y = offset;
+        velocity.y = velocity.y * downgradeBy;
       }
     },
     actionBottom: () => {
       if (checkBottom) {
-        position.setY(height - offset);
-        velocity.setY(velocity.getY() * downgradeBy);
+        position.y = height - offset;
+        velocity.y = velocity.y * downgradeBy;
       }
     },
     actionLeft: () => {
       if (checkLeft) {
-        position.setX(offset);
-        velocity.setX(velocity.getX() * downgradeBy);
+        position.x = offset;
+        velocity.x = velocity.x * downgradeBy;
       }
     },
     actionRight: () => {
       if (checkRight) {
-        position.setX(width - offset);
-        velocity.setX(velocity.getX() * downgradeBy);
+        position.x = width - offset;
+        velocity.x = velocity.x * downgradeBy;
       }
     }
   };
 
-  onBoundaryCrossing(position.getCords(), offset, actions);
+  onBoundaryCrossing(position, offset, actions);
 };
 
 //Fix for top boundary check as without it goes into loop - draw bottom, draw top
