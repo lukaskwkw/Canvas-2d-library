@@ -1,4 +1,3 @@
-// import Particle from "../../utils/canvas/particle";
 import { PlaneSingleton } from "../../utils/canvas/plane";
 import SpringWithGravity from "../../utils/canvas/spring";
 import { PlayerSpring } from "../../utils/canvas/player";
@@ -28,43 +27,44 @@ export const setup = () => (height, width) => (
 
   const screenMargins = 20;
   const downgradeRatio = width < 600 ? 0.5 : 1;
+  const attachmentOffset = 150;
+  const friction = 0.95;
 
-  const commonK = 0.01;
+  const commonK = 0.05;
   const weight = new SpringWithGravity(randomPoint(screenMargins), {
     size: 15 * downgradeRatio,
     k: commonK,
     weight: 20,
-    friction: 0.95,
-    offset: 150,
-    speed: 10
+    friction: friction,
+    offset: attachmentOffset,
+    speed: 1
   });
 
   const weight2 = new SpringWithGravity(randomPoint(screenMargins), {
     size: 15 * downgradeRatio,
     k: commonK,
-    weight: 10,
-    friction: 0.95,
-    offset: 150,
-    speed: 10
-    // pointsOfAttachments: [weight.getPosition()]
+    weight: 20,
+    friction: friction,
+    offset: attachmentOffset,
+    speed: 1
   });
 
-  // const Ship = new PlayerSpring(randomPoint(screenMargins), {
-  //   size: 20 * downgradeRatio,
-  //   k: commonK,
-  //   weight: 20,
-  //   friction: 0.95,
-  //   offset: 150,
-  //   speed: 10,
-  //   pointsOfAttachments: [weight.getPosition(), weight2.getPosition()]
-  // });
+  const Ship = new PlayerSpring(randomPoint(screenMargins), {
+    size: 20 * downgradeRatio,
+    k: commonK,
+    weight: 20,
+    friction: 0.98,
+    offset: attachmentOffset,
+    speed: 1,
+    pointsOfAttachments: [weight, weight2]
+  });
 
-  weight.attachTo(weight2.getPosition());
-  // weight.attachTo(Ship.getPosition());
-  weight2.attachTo(weight.getPosition());
-  // weight2.attachTo(Ship.getPosition());
+  weight.attachTo(weight2);
+  weight.attachTo(Ship);
+  weight2.attachTo(weight);
+  weight2.attachTo(Ship);
 
-  const allParticles = [weight, weight2 /* Ship */];
+  const allParticles = [weight, weight2, Ship];
 
   mousePointerCollisionUpdater(allParticles, canvas)();
   touchCollisionUpdater(allParticles, canvas)();
@@ -73,16 +73,15 @@ export const setup = () => (height, width) => (
     if (checkUnmount()) {
       return;
     }
-
     context.clearRect(0, 0, width, height);
 
-    // Ship.render();
+    Ship.render();
     weight.render();
     weight2.render();
     connectDotsAndStroke([
       weight.getPosition(),
       weight2.getPosition(),
-      // Ship.getPosition(),
+      Ship.getPosition(),
       weight.getPosition()
     ]);
 

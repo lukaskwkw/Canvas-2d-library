@@ -50,7 +50,7 @@ export const JetEngine = {
       updater();
     });
 
-    const { x, y } = particle.getPosition();
+    const { x, y } = particle;
     const { size, fillColor } = particle.features;
 
     particle.renderer(
@@ -102,7 +102,7 @@ export const JetEngine = {
       if (player.jetFireLength < maxIgniteValue) {
         player.jetDrive.setLength(player.jetFireLength + defaultIgniteRatio);
       }
-      player.accelerate(player.jetDrive);
+      player.accelerate(player.jetDrive._x, player.jetDrive._y);
     }
   }
 };

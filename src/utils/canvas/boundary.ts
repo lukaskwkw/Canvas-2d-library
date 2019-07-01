@@ -1,5 +1,5 @@
 import Particle from "./particle";
-import Vector, { Point } from "../vector";
+import { Point } from "../vector";
 import {
   PlaneDefaultBoundaries,
   PlaneDimensions,
@@ -76,8 +76,7 @@ const onBoundaryCrossing = (
 };
 
 export const bouncingBoundires = (
-  velocity: Point,
-  position: Point,
+  particle: VelocityParticle,
   planeDimensions: PlaneDimensions,
   offset: number = 0,
   selector: BoundriesSelector
@@ -94,38 +93,38 @@ export const bouncingBoundires = (
   const actions = {
     actionTop: () => {
       if (checkTop) {
-        position.y = offset;
-        velocity.y = velocity.y * downgradeBy;
+        particle.y = offset;
+        particle.velocityY = particle.velocityY * downgradeBy;
       }
     },
     actionBottom: () => {
       if (checkBottom) {
-        position.y = height - offset;
-        velocity.y = velocity.y * downgradeBy;
+        particle.y = height - offset;
+        particle.velocityY = particle.velocityY * downgradeBy;
       }
     },
     actionLeft: () => {
       if (checkLeft) {
-        position.x = offset;
-        velocity.x = velocity.x * downgradeBy;
+        particle.x = offset;
+        particle.velocityX = particle.velocityX * downgradeBy;
       }
     },
     actionRight: () => {
       if (checkRight) {
-        position.x = width - offset;
-        velocity.x = velocity.x * downgradeBy;
+        particle.x = width - offset;
+        particle.velocityX = particle.velocityX * downgradeBy;
       }
     }
   };
 
-  onBoundaryCrossing(position, offset, actions);
+  onBoundaryCrossing(particle, offset, actions);
 };
 
 //Fix for top boundary check as without it goes into loop - draw bottom, draw top
 const TopFix = 1;
 
 export const moveToOtherSide = (
-  position: Vector,
+  position: Point,
   offset: number = 0,
   selector: BoundriesSelector = PlaneDefaultBoundaries,
   planeDimensions?: PlaneDimensions
@@ -140,13 +139,29 @@ export const moveToOtherSide = (
     planeDimensions || new PlaneSingleton().features.dimensions;
 
   const actions = {
-    actionTop: () => checkTop && position.setY(height - offset - TopFix),
-    actionBottom: () => checkBottom && position.setY(offset),
-    actionLeft: () => checkLeft && position.setX(width - offset),
-    actionRight: () => checkRight && position.setX(offset)
+    actionTop: () => {
+      if (checkTop) {
+        position.y = height - offset - TopFix;
+      }
+    },
+    actionBottom: () => {
+      if (checkBottom) {
+        position.y = offset;
+      }
+    },
+    actionLeft: () => {
+      if (checkLeft) {
+        position.x = width - offset;
+      }
+    },
+    actionRight: () => {
+      if (checkRight) {
+        position.x = offset;
+      }
+    }
   };
 
-  onBoundaryCrossing(position.getCords(), offset, actions);
+  onBoundaryCrossing(position, offset, actions);
 };
 
 export const removeDeadParticles = (particles: Particle[], offset?: number) => {

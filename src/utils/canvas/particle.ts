@@ -1,5 +1,5 @@
 import { BoundriesSelector } from "./boundary";
-import Vector, { Point } from "../vector";
+import { Point } from "../vector";
 import {
   PlaneDimensions,
   PlaneSingleton,
@@ -60,6 +60,7 @@ class Particle implements Simple {
   features: ParticleFeatures;
   context?: CanvasRenderingContext2D;
   update: UpdateObject[] = [];
+  position;
 
   constructor(
     particlePosition: Point,
@@ -76,6 +77,7 @@ class Particle implements Simple {
 
     this.x = x;
     this.y = y;
+    this.position = { x, y };
     this.features = { ...SimpleFeatures, ...particleFeatures };
 
     if (renderer) {

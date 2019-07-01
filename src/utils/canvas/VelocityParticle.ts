@@ -30,9 +30,9 @@ export interface VelocityFeatures extends SimpleFeatures {
   boundary?: BoundriesSelector;
 }
 
-const friction = (particleV: VelocityParticle, friction: number) => () => {
-  particleV.velocityX * friction;
-  particleV.velocityY * friction;
+const friction = (particleV: VelocityParticle) => () => {
+  particleV.velocityX *= particleV.features.friction;
+  particleV.velocityY *= particleV.features.friction;
 };
 
 const DefaultVelocityFeatures = {
@@ -42,8 +42,8 @@ const DefaultVelocityFeatures = {
 };
 
 class VelocityParticle extends Particle implements Velocity {
-  velocityX: number;
-  velocityY: number;
+  velocityX: number = 0;
+  velocityY: number = 0;
   features: VelocityFeatures;
 
   constructor(
@@ -80,8 +80,7 @@ class VelocityParticle extends Particle implements Velocity {
     //TODO2: Check performance
     if (boundary && some(boundary)(key => boundary[key] === true)) {
       this.addBoundaryFunction(bouncingBoundires, [
-        { x: this.velocityX, y: this.velocityY },
-        { x: this.x, y: this.y },
+        this,
         this.planeDimensions,
         size,
         boundary
@@ -103,7 +102,7 @@ class VelocityParticle extends Particle implements Velocity {
     this.features.friction = value;
     this.update.push({
       name: UPDATERS.FRICTION,
-      updater: friction(this, this.features.friction)
+      updater: friction(this)
     });
   }
 
